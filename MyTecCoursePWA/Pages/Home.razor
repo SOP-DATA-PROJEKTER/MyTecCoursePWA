@@ -9,7 +9,7 @@
             Mit Tec Forløb!
         </h1>
 
-        <div class="gap-4 flex w-full flex-wrap justify-center md:gap-6 lg:gap-8 xl:gap-10">
+        <div class="flex w-full flex-wrap justify-center gap-4 md:gap-6 lg:gap-8 xl:gap-10">
             @foreach (var item in educationList)
             {
                 <div class="my-4 w-full sm:w-1/2 sm:h-40 sm:my-6 md:w-1/3 md:my-8 lg:my-10 xl:w-3/12 xl:my-12">
@@ -27,8 +27,8 @@
     // Mock Data for educationList
     List<Education> educationList = new()
     {
-        new Education("EUD", "Learn programming, algorithms, and more."),
-        new Education("EUX", "Focus on building large-scale software systems."),
+        new Education("EUD", "Erhvervsuddannelser"),
+        new Education("EUX", "Studenterhue & Svendebrev"),
     };
 
     private class Education

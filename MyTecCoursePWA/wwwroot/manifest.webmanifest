@@ -9,26 +9,26 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "icon-512.png",
+      "src": "TecIconUpscaled.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "440x220"
     },
     {
-      "src": "icon-192.png",
+      "src": "TecIcon.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "110x55"
     }
   ],
   "screenshots": [
     {
-      "src": "screenshot1080.png",
-      "sizes": "1080x1920",
+      "src": "MitTecForløbNarrow.png",
+      "sizes": "259x50",
       "type": "image/png",
       "form_factor": "narrow"
     },
     {
-      "src": "screenshot1920.png",
-      "sizes": "1920x1320",
+      "src": "MitTecForløbWide.png",
+      "sizes": "540x350",
       "type": "image/png",
       "form_factor": "wide"
     }
