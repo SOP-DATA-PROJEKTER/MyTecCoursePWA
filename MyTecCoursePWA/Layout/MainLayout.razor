@@ -1,0 +1,48 @@
+﻿@using MyTecCoursePWA.Components.Navbar
+@using MyTecCoursePWA.Components.Footer
+
+@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
+<CascadingValue Value="this">
+	<div class="page">
+		<div class="h-16 md:h-20 lg:h-28 xl:h-16">
+			<Navbar />
+		</div>
+		<main>
+			<article class="fade-container mx-6 my-8 px-4 overflow-hidden @fadeClass">
+				@Body
+			</article>
+		</main>
+
+		<div>
+			<Footer />
+		</div>
+	</div>
+	</CascadingValue>
+
+@code {
+	private string fadeClass = "";
+
+	public async Task HandleMessageFromPage(string link)
+	{
+		fadeClass = "fade-out";
+		StateHasChanged();
+
+		await Task.Delay(250);
+
+		NavigationManager.NavigateTo(link);
+
+		fadeClass = "fade-in";
+		StateHasChanged();
+
+		await Task.Delay(250);
+
+		fadeClass = "";
+		StateHasChanged();
+
+		InvokeAsync(() => StateHasChanged());
+
+	}
+}

@@ -1,0 +1,36 @@
+{
+  "name": "MyTecCoursePWA",
+  "short_name": "MyTecCoursePWA",
+  "id": "./",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#03173d",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot1080.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "screenshot1920.png",
+      "sizes": "1920x1320",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}
