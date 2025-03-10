@@ -25,3 +25,26 @@ Projektets front-end er lavet i Blazor (PWA - Progressive Web App)
 ![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/fabbeskrivelse_desktop.png?raw=true)
 
 📌 **[🔙 Tilbage til README](README.md)**
+
+## Mobil view
+
+### Forside
+![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/mobilview/Frontpage_mobil.png?raw=true)
+
+### Uddannelsesvej
+![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/mobilview/Uddannelsevej_mobil.png?raw=true)
+
+### Specialisering
+![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/mobilview/Specilisering_mobil.png?raw=true)
+
+### Forloeb
+![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/mobilview/forloeb_mobil.png?raw=true)
+
+### Fag
+![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/mobilview/fag_mobil.png?raw=true)
+
+### Fag beskrivelse
+![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/mobilview/fagbeskrivelse_mobil.png?raw=true)
+
+📌 **[🔙 Tilbage til README](README.md)**
+
