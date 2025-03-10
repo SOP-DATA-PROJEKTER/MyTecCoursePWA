@@ -1,5 +1,7 @@
 # Design og Layout
 
+📌 **[🔙 Tilbage til README](README.md)**
+
 Projektets front-end er lavet i Blazor (PWA - Progressive Web App)
 
 ## Desktop view
@@ -21,3 +23,5 @@ Projektets front-end er lavet i Blazor (PWA - Progressive Web App)
 
 ### Fag beskrivelse
 ![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/fabbeskrivelse_desktop.png?raw=true)
+
+📌 **[🔙 Tilbage til README](README.md)**
