@@ -2,7 +2,26 @@
 
 ## Den ultimative TEC-studerendes ressource
 
-### Overordnede idé bag projektet
+## Indholdsfortegnelse
+
+1. [Overordnede ide bag projektet](#overordnede-ide-bag-projektet)
+2. [Kravspecifikationer for TEC-projektet](#kravspecifikationer-for-tec-projektet)
+   - [Generelle krav](#generelle-krav)
+   - [Laerlinge-log og opfoelgning](#laerlinge-log-og-opfoelgning)
+   - [Inputfeltets struktur](#inputfeltets-struktur)
+   - [Teknologi og design](#teknologi-og-design)
+3. [Design og Layout](#design-og-layout)
+   - [Desktop view](#desktop-view)
+     - [Forside](#forside)
+     - [Uddannelsesvej](#uddannelsesvej)
+     - [Specialisering](#specialisering)
+     - [Forloeb](#forloeb)
+     - [Fag](#fag)
+     - [Fag beskrivelse](#fag-beskrivelse)
+
+---
+
+### Overordnede ide bag projektet
 Projektet handler om at skabe en app eller et website, som TEC-elever kan bruge til en række forskellige formål:
 
 - Indeholde informationer om alle uddannelser, der tilbydes på TEC.
@@ -26,7 +45,7 @@ Projektet handler om at skabe en app eller et website, som TEC-elever kan bruge 
 - Visning af alle fag, som man skal igennem hele hovedforløbet.
 - Information om hvert fag.
 
-### Lærlinge-log og opfølgning
+### Laerlinge-log og opfoelgning
 - Et inputfelt, hvor eleverne kan udfylde deres datalog over, hvad de har lavet i deres lærlingeforløb.
 - To uger før eleven skal tilbage i skole, sendes en reminder-mail til eleven og lærlingeansvarlig omkring udfyldelse.
 - Mulighed for at uploade det udfyldte inputfelt til en afleveringsmappe i **Itslearning** eller nemt vedhæfte det til en mail via en knap med et **mail/upload ikon**.
@@ -44,4 +63,25 @@ Projektet handler om at skabe en app eller et website, som TEC-elever kan bruge 
 
 ---
 
+## Design og Layout
 
+Projektets front-end er lavet i Blazor (PWA - Progressive web app)
+
+### Desktop view
+#### Forside
+![image](https://raw.githubusercontent.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/refs/heads/master/readmeFiles/pictures/desktop/frontpage_desktop.png)
+
+#### Uddannelsesvej
+![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/uddannelsevej_desktop.png?raw=true)
+
+#### Specialisering
+![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/specialisering_desktop.png?raw=true)
+
+#### Forloeb
+![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/forloeb_desktop.png?raw=true)
+
+#### Fag
+![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/fag_desktop.png?raw=true)
+
+#### Fag beskrivelse
+![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/fabbeskrivelse_desktop.png?raw=true)
