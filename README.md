@@ -10,14 +10,7 @@
    - [Laerlinge-log og opfoelgning](#laerlinge-log-og-opfoelgning)
    - [Inputfeltets struktur](#inputfeltets-struktur)
    - [Teknologi og design](#teknologi-og-design)
-3. [Design og Layout](#design-og-layout)
-   - [Desktop view](#desktop-view)
-     - [Forside](#forside)
-     - [Uddannelsesvej](#uddannelsesvej)
-     - [Specialisering](#specialisering)
-     - [Forloeb](#forloeb)
-     - [Fag](#fag)
-     - [Fag beskrivelse](#fag-beskrivelse)
+3. [📐 Design og Layout](DESIGN.md)
 
 ---
 
@@ -63,25 +56,4 @@ Projektet handler om at skabe en app eller et website, som TEC-elever kan bruge 
 
 ---
 
-## Design og Layout
-
-Projektets front-end er lavet i Blazor (PWA - Progressive web app)
-
-### Desktop view
-#### Forside
-![image](https://raw.githubusercontent.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/refs/heads/master/readmeFiles/pictures/desktop/frontpage_desktop.png)
-
-#### Uddannelsesvej
-![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/uddannelsevej_desktop.png?raw=true)
-
-#### Specialisering
-![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/specialisering_desktop.png?raw=true)
-
-#### Forloeb
-![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/forloeb_desktop.png?raw=true)
-
-#### Fag
-![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/fag_desktop.png?raw=true)
-
-#### Fag beskrivelse
-![image](https://github.com/SOP-DATA-PROJEKTER/MyTecCoursePWA/blob/master/readmeFiles/pictures/desktop/fabbeskrivelse_desktop.png?raw=true)
+📐 **Se detaljer om design og layout her: [DESIGN.md](DESIGN.md)**
