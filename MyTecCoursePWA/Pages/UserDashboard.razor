@@ -1,7 +1,151 @@
 ﻿@page "/UserDashboard"
 
-<h3>UserDashboard</h3>
 
-@code {
+
+
+
+
+@code{
+
+    public class Education
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public List<Pathway> Pathways { get; set; } = new();
+    }
+
+    public class Pathway
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public List<Specialization> Specializations { get; set; } = new();
+    }
+
+    public class Specialization
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public List<Course> Courses { get; set; } = new();
+    }
+
+    public class Course
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public List<Subject> Subjects { get; set; } = new();
+    }
+
+    public class Subject
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public List<Milestone> Milestones { get; set; } = new();
+    }
+
+    public class Milestone
+    {
+        public int Id { get; set; }
+        public string Description { get; set; } = string.Empty;
+    }
+
+    public class User
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public Pathway? SelectedPathway { get; set; }
+        public Course? SelectedCourse { get; set; }
+    }
+
+    public static class EducationData
+    {
+        public static List<Education> EducationList = new()
+    {
+        new Education
+        {
+            Id = 100,
+            Name = "EUD",
+            Description = "Erhvervsuddannelser",
+            Pathways = new List<Pathway>
+            {
+                new Pathway
+                {
+                    Id = 200,
+                    Name = "Data og Kommunikation",
+                    Specializations = new List<Specialization>
+                    {
+                        new Specialization
+                        {
+                            Id = 300,
+                            Name = "Programmering",
+                            Courses = new List<Course>
+                            {
+                                new Course
+                                {
+                                    Id = 400,
+                                    Name = "Praktikforløb 1",
+                                    Subjects = new List<Subject>
+                                    {
+                                        new Subject
+                                        {
+                                            Id = 500,
+                                            Name = "Praktisk oplæring i virksomheden",
+                                            Description = "Eleven kan føre simple opgaver hvor dataudstyr anvendes",
+                                            Milestones = new List<Milestone>
+                                            {
+                                                new Milestone { Id = 600, Description = "Eleven skal selvstændigt kunne fremstille små enkle programmer med et programmeringssprog." },
+                                                new Milestone { Id = 601, Description = "Eleven skal kunne anvende et programmeringsværktøj til udvikling af programmer." },
+                                                new Milestone { Id = 602, Description = "Eleven skal kunne anvende et versionsstyringsværktøj til at gemme og hente programmer." },
+                                                new Milestone { Id = 603, Description = "Eleven skal kunne håndtere forskellige talsystemer og benytte disse i forbindelse med f.eks. IP-adresser." }
+                                            }
+                                        }
+                                    }
+                                },
+                                new Course
+                                {
+                                    Id = 401,
+                                    Name = "Hovedforløb 1",
+                                    Subjects = new List<Subject>
+                                    {
+                                        new Subject
+                                        {
+                                            Id = 501,
+                                            Name = "Grundlæggende programmering",
+                                            Description = "I faget Grundlæggende programmering lærer du at designe, planlægge og udvikle mindre konsolprogrammer baseret på givne krav.",
+                                            Milestones = new List<Milestone>
+                                            {
+                                                new Milestone { Id = 604, Description = "Lærlingen kan selvstændigt designe, planlægge og udvikle et mindre konsolprogram baseret på en case-opgave og opfylde de stillede krav." },
+                                                new Milestone { Id = 605, Description = "Lærlingen kan anvende et programmeringssprog til at udarbejde mindre konsolprogrammer." },
+                                                new Milestone { Id = 606, Description = "Lærlingen kan vælge en hensigtsmæssig datatype til en opgave." }
+                                            }
+                                        },
+                                        new Subject
+                                        {
+                                            Id = 502,
+                                            Name = "Objektorienteret programmering",
+                                            Description = "Er under udarbejdelse (maj/2022)",
+                                            Milestones = new List<Milestone>
+                                            {
+                                                new Milestone { Id = 607, Description = "Under udarbejdelse (maj/2022)" }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        new Education
+        {
+            Id = 101,
+            Name = "EUX",
+            Description = "Studenterhue og Svendebrev",
+            Pathways = new List<Pathway>()
+        }
+    };
+    }
 
 }
