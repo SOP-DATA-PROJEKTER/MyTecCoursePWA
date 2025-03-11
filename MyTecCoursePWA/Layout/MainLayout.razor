@@ -6,21 +6,20 @@
 @inject NavigationManager NavigationManager
 
 <CascadingValue Value="this">
-	<div class="page">
+	<div class="page flex min-h-screen flex-col">
 		<div class="h-16 md:h-20 lg:h-28 xl:h-16">
 			<Navbar />
 		</div>
-		<main>
-			<article class="fade-container mx-6 my-8 px-4 overflow-hidden @fadeClass">
+		<main class="flex-grow">
+			<article class="fade-container mx-6 my-8 overflow-hidden px-4 @fadeClass">
 				@Body
 			</article>
 		</main>
-
 		<div>
 			<Footer />
 		</div>
 	</div>
-	</CascadingValue>
+</CascadingValue>
 
 @code {
 	private string fadeClass = "";
