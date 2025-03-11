@@ -57,3 +57,13 @@ Projektet handler om at skabe en app eller et website, som TEC-elever kan bruge 
 ---
 
 📐 **Se detaljer om design og layout her: [DESIGN.md](DESIGN.md)**
+
+
+<hr>
+
+## Tailwind
+til udvikling af tailwind - download tailwind cli og pladser den i mappen hvor projektet er (ikke solution), kør derefter denne powershell commando for at få tailwind til at generere filer ud fra de tailwind classes der bliver skrevet.
+```
+.\tailwindcss-windows-x64.exe -i .\wwwroot\css\app.css -o .\wwwroot\css\app.min.css --watch
+```
+Husk desuden at lade tailwind-powershell stå åben mens der udvikles.
