@@ -3,8 +3,8 @@
 
 @inject NavigationManager Navigation
 
-<nav class="top-0 border-gray-300 bg-[var(--secondary-color)] text-gray-900 fixed z-50 w-full border-b shadow-md">
-	<div class="h-16 px-4 flex w-full items-center justify-between md:px-6 md:h-20 lg:h-28 xl:h-16">
+<nav class="fixed top-0 z-50 w-full border-b border-gray-300 bg-[var(--secondary-color)] text-gray-900 shadow-md">
+	<div class="flex h-16 w-full items-center justify-between px-4 md:px-6 md:h-20 lg:h-28 xl:h-16">
 
 		<!-- Logo Section -->
 		<div class="hover-underline group flex cursor-pointer items-center">
@@ -13,7 +13,7 @@
 				<svg viewBox="0 0 98 34"
 					 fill="none"
 					 xmlns="http://www.w3.org/2000/svg"
-					 class="w-24 h-auto lg:w-32 xl:w-24">
+					 class="h-auto w-24 lg:w-32 xl:w-24">
 
 					<g clip-path="url(#clip0_1269_18353)">
 						<path id="Vector_1" d="M0 10.2822H11.6218V33.2723H14.452V7.42969H0V10.2822Z" fill="var(--foreground)" class="group-hover:fill-[var(--primary-color-shade)]"></path>
@@ -35,7 +35,7 @@
 		</div>
 
 		<!-- Navigation Links -->
-		<div class="space-x-6 flex items-center">
+		<div class="flex items-center space-x-6">
 			<div class="hover-underline-single cursor-pointer text-sm font-bold uppercase transition hover:text-[var(--primary-color)] md:text-xl lg:text-2xl xl:text-sm">
 				<div @onclick=" () => HandleButtonClick(login)">
 					Login
@@ -54,7 +54,7 @@
 @code {
 	[CascadingParameter] public MainLayout Layout { get; set; }
 
-	private string login = "/login";
+	private string login = "/UserDashboard_J";
 	private string register = "/register";
 	private string home = "/";
 
