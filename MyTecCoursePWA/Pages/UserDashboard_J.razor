@@ -26,7 +26,7 @@
         <!-- Education Selection -->
         <div class="mb-4">
             <label class="mb-2 block text-lg font-medium">Education</label>
-            <select class="w-full rounded-lg bg-gray-700 p-2" @bind="selectedEducation" @bind:event="onchange">
+            <select class="w-full rounded-lg bg-gray-700 p-2" @bind="selectedEducationName">
                 <option value="">Select Education</option>
                 @foreach (var education in educationList)
                 {
@@ -35,35 +35,28 @@
             </select>
         </div>
 
-        <!-- Pathway Selection -->
         @if (selectedEducation != null)
         {
-            <div class="mb-4">
-                <label class="mb-2 block text-lg font-medium">Pathway</label>
-                <select class="w-full rounded-lg bg-gray-700 p-2" @bind="selectedPathway" @bind:event="onchange">
-                    <option value="">Select Pathway</option>
-                    @foreach (var pathway in selectedEducation.Pathways)
-                    {
-                        <option value="@pathway.Name">@pathway.Name</option>
-                    }
-                </select>
-            </div>
+            <select class="w-full rounded-lg bg-gray-700 p-2" @bind="selectedPathwayName">
+                <option value="">Select Pathway</option>
+                @foreach (var pathway in selectedEducation.Pathways)
+                {
+                    <option value="@pathway.Name">@pathway.Name</option>
+                }
+            </select>
         }
 
-        <!-- Specialization Selection -->
         @if (selectedPathway != null)
         {
-            <div class="mb-4">
-                <label class="mb-2 block text-lg font-medium">Specialization</label>
-                <select class="w-full rounded-lg bg-gray-700 p-2" @bind="selectedSpecialization" @bind:event="onchange">
-                    <option value="">Select Specialization</option>
-                    @foreach (var specialization in selectedPathway.Specializations)
-                    {
-                        <option value="@specialization.Name">@specialization.Name</option>
-                    }
-                </select>
-            </div>
+            <select class="w-full rounded-lg bg-gray-700 p-2" @bind="selectedSpecializationName">
+                <option value="">Select Specialization</option>
+                @foreach (var specialization in selectedPathway.Specializations)
+                {
+                    <option value="@specialization.Name">@specialization.Name</option>
+                }
+            </select>
         }
+
     </div>
 </div>
 
@@ -118,6 +111,40 @@
     private Education? selectedEducation;
     private Pathway? selectedPathway;
     private Specialization? selectedSpecialization;
+    private string? selectedEducationName
+    {
+        get => selectedEducation?.Name;
+        set
+        {
+            selectedEducation = educationList.FirstOrDefault(e => e.Name == value);
+            selectedPathway = null;
+            selectedSpecialization = null;
+            FilterCourses();
+        }
+    }
+    private string? selectedPathwayName
+    {
+        get => selectedPathway?.Name;
+        set
+        {
+            selectedPathway = selectedEducation?.Pathways.FirstOrDefault(p => p.Name == value);
+            selectedSpecialization = null;
+            FilterCourses();
+        }
+    }
+
+    private string? selectedSpecializationName
+    {
+        get => selectedSpecialization?.Name;
+        set
+        {
+            selectedSpecialization = selectedPathway?.Specializations.FirstOrDefault(s => s.Name == value);
+            FilterCourses();
+        }
+    }
+
+
+
 
     private bool isSidebarOpen = false;
     private string sidebarIcon = "☰";

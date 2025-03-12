@@ -1,0 +1,181 @@
+﻿@page "/UserDashboard_Jv2"
+@using MyTecCoursePWA.Models
+@inject MockEducationService EducationService
+
+@* Wrapper *@
+<div class="wrapper flex min-h-screen flex-col space-y-6 bg-gray-100 p-4">
+    @* User profile card *@
+    <div class="rounded-lg border border-[var(--background)] bg-white p-6 shadow-lg">
+        @* Profile picture & name wrapper *@
+        <div class="mb-4 flex items-center space-x-3">
+            @* Profile picture *@
+            <div class="h-12 w-12 overflow-hidden rounded-full border-gray-300">
+                <img src="./ProfilePicture_Default.jpg" alt="Profile Picture" class="h-full w-full object-cover" />
+            </div>
+            @* Profile name *@
+            <div class="flex-1">
+                <input type="text" name="name" value="@user.Name" class="w-full rounded-lg border p-2 text-black" placeholder="Enter your name" />
+            </div>
+        </div>
+        @* Dropdowns *@
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <select class="w-full rounded-lg border bg-white p-2 text-black" @bind="selectedEducationName" @bind:after="OnEducationChanged">
+                <option value="">Select Education</option>
+                @foreach (var education in educationList)
+                {
+                    <option value="@education.Name">@education.Name</option>
+                }
+            </select>
+
+            <select class="w-full rounded-lg border bg-white p-2 text-black" @bind="selectedPathwayName" @bind:after="OnPathwayChanged">
+                <option value="">Select Pathway</option>
+                @foreach (var pathway in selectedEducation?.Pathways ?? new List<Pathway>())
+                {
+                    <option value="@pathway.Name">@pathway.Name</option>
+                }
+            </select>
+
+            <select class="w-full rounded-lg border bg-white p-2 text-black" @bind="selectedSpecializationName" @bind:after="OnSpecializationChanged">
+                <option value="">Select Specialization</option>
+                @foreach (var specialization in selectedPathway?.Specializations ?? new List<Specialization>())
+                {
+                    <option value="@specialization.Name">@specialization.Name</option>
+                }
+            </select>
+
+            <select class="w-full rounded-lg border bg-white p-2 text-black" @bind="selectedCourseName" @bind:after="OnCourseChanged">
+                <option value="">Select Course</option>
+                @foreach (var course in selectedSpecialization?.Courses ?? new List<Course>())
+                {
+                    <option value="@course.Name">@course.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    @* Course lists *@
+    @if (!string.IsNullOrEmpty(selectedCourseName) && subjectList.Any())
+    {
+        <div class="space-y-6">
+            @foreach (var subject in subjectList)
+            {
+                <div class="space-y-4 rounded-lg border border-[var(--background)] bg-white p-6 shadow-lg">
+                    <h3 class="text-lg font-semibold text-black">@subject.Name</h3>
+                    <div class="space-y-4">
+                        @foreach (var milestone in subject.Milestones)
+                        {
+                            <div class="rounded-lg bg-gray-50 p-4">
+                                <h4 class="text-md font-medium text-black">@milestone.Description</h4>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private string selectedEducationName;
+    private string selectedPathwayName;
+    private string selectedSpecializationName;
+    private string selectedCourseName;
+
+    private Education selectedEducation;
+    private Pathway selectedPathway;
+    private Specialization selectedSpecialization;
+    private Course selectedCourse;
+    private List<Subject> subjectList;
+    private List<Education> educationList;
+    private User user;
+
+    protected override void OnInitialized()
+    {
+        educationList = EducationService.GetEducationList();
+        selectedEducation = educationList.Find(x => x.Name == "EUD");
+        selectedPathway = selectedEducation?.Pathways.Find(x => x.Name == "Data og Kommunikation");
+        selectedSpecialization = selectedPathway?.Specializations.Find(x => x.Name == "Programmering");
+        selectedCourse = selectedSpecialization?.Courses.Find(x => x.Name == "Hovedforløb 1");
+
+        selectedEducationName = selectedEducation?.Name ?? "";
+        selectedPathwayName = selectedPathway?.Name ?? "";
+        selectedSpecializationName = selectedSpecialization?.Name ?? "";
+        selectedCourseName = selectedCourse?.Name ?? "";
+
+        // Create User on page load with default values
+        user = new User
+            {
+                Name = "John Doe",
+                SelectedEducation = selectedEducation.Name,
+                SelectedPathway = selectedPathway.Name,
+                SelectedSpecialization = selectedSpecialization.Name,
+                SelectedCourse = selectedCourse.Name
+            };
+
+        updateSubjectList();
+    }
+
+    private void OnEducationChanged()
+    {
+        selectedEducation = educationList.FirstOrDefault(x => x.Name == selectedEducationName);
+        selectedPathway = null;
+        selectedSpecialization = null;
+        selectedCourse = null;
+
+        selectedPathwayName = "";
+        selectedSpecializationName = "";
+        selectedCourseName = "";
+
+        updateSubjectList();
+    }
+
+    private void OnPathwayChanged()
+    {
+        selectedPathway = selectedEducation?.Pathways.FirstOrDefault(x => x.Name == selectedPathwayName);
+        selectedSpecialization = null;
+        selectedCourse = null;
+
+        selectedSpecializationName = "";
+        selectedCourseName = "";
+
+        updateSubjectList();
+    }
+
+    private void OnSpecializationChanged()
+    {
+        selectedSpecialization = selectedPathway?.Specializations.FirstOrDefault(x => x.Name == selectedSpecializationName);
+        selectedCourse = null;
+        selectedCourseName = "";
+
+        updateSubjectList();
+    }
+
+    private void OnCourseChanged()
+    {
+        selectedCourse = selectedSpecialization?.Courses.FirstOrDefault(x => x.Name == selectedCourseName);
+        updateSubjectList();
+    }
+
+    private void updateSubjectList()
+    {
+        if (!string.IsNullOrEmpty(selectedCourseName))
+        {
+            subjectList = selectedCourse?.Subjects ?? new List<Subject>();
+        }
+        else
+        {
+            subjectList = new List<Subject>(); // Reset subjectList when no course is selected
+        }
+
+        StateHasChanged(); // Force re-render after updating the subject list
+    }
+
+    public class User
+    {
+        public string Name { get; set; }
+        public string SelectedEducation { get; set; }
+        public string SelectedPathway { get; set; }
+        public string SelectedSpecialization { get; set; }
+        public string SelectedCourse { get; set; }
+    }
+}

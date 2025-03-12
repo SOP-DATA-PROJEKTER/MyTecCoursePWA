@@ -1,0 +1,51 @@
+﻿@typeparam T
+
+<div class="relative container mx-auto mt-2 w-64 text-center">
+    <span class="choose mb-2 block text-gray-700">@Title</span>
+
+    <div class="dropdown relative w-full rounded-lg border bg-white shadow-md transition-all ease-in-out hover:shadow-lg">
+        <div class="select flex cursor-pointer items-center justify-between p-3" @onclick="ToggleDropdown">
+            <span>@(SelectedValue?.ToString() ?? DefaultText)</span>
+            <i class="fa fa-chevron-left text-sm text-gray-500 transition-transform duration-200"
+               style="@((isDropdownVisible) ? "transform: rotate(-90deg);" : "")"></i>
+        </div>
+
+        <input type="hidden" name="@InputName" value="@SelectedValue?.ToString()" />
+
+        @if (isDropdownVisible)
+        {
+            <ul class="dropdown-menu absolute left-0 z-10 mt-1 w-full rounded-b-lg bg-white shadow-lg">
+                @foreach (var item in Items)
+                {
+                    <li @onclick="() => SelectItem(item)" class="px-4 py-2 hover:bg-gray-200 cursor-pointer">
+                        @item.ToString()
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public string Title { get; set; } = "Select Item";
+    [Parameter] public string DefaultText { get; set; } = "Select";
+    [Parameter] public string InputName { get; set; } = "selectedItem";
+    [Parameter] public List<T> Items { get; set; } = new();
+
+    [Parameter] public T SelectedValue { get; set; }
+    [Parameter] public EventCallback<T> SelectedValueChanged { get; set; }
+
+    private bool isDropdownVisible = false;
+
+    private async Task SelectItem(T item)
+    {
+        SelectedValue = item;
+        await SelectedValueChanged.InvokeAsync(item); // Notify parent that value changed
+        isDropdownVisible = false; // Close dropdown
+    }
+
+    private void ToggleDropdown()
+    {
+        isDropdownVisible = !isDropdownVisible;
+    }
+}
