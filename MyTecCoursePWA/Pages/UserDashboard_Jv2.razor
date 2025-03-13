@@ -2,70 +2,52 @@
 @using MyTecCoursePWA.Models
 @inject MockEducationService EducationService
 
-
-@* Wrapper *@
-<div class="wrapper flex min-h-screen flex-col space-y-6 bg-gray-100 p-4">
-    @* User profile card *@
-    <div class="rounded-lg border border-[var(--background)] bg-white p-6 shadow-lg">
-        @* Profile picture & name wrapper *@
+<div class="wrapper flex flex-col space-y-6 bg-[var(--background)] px-4 py-6" >
+    <div class="rounded-lg border border-[var(--background)] bg-white p-6 shadow-lg shadow-black">
         <div class="mb-4 flex items-center space-x-3">
-            @* Profile picture *@
-            <div class="h-12 w-12 overflow-hidden rounded-full border-gray-300">
+            <div class="h-12 w-12 overflow-hidden rounded-full">
                 <img src="./ProfilePicture_Default.jpg" alt="Profile Picture" class="h-full w-full object-cover" />
             </div>
-            @* Profile name *@
             <div class="flex-1">
-                <input type="text" name="name" value="@user.Name" class="w-full rounded-lg border p-2 text-black" placeholder="Enter your name" />
+                <input type="text" name="name" value="@user.Name" class="w-full border p-2 text-black" placeholder="Enter your name" />
             </div>
         </div>
-        @* Dropdowns *@
+
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <select class="w-full rounded-lg border bg-white p-2 text-black" @bind="selectedEducationName" @bind:after="OnEducationChanged">
-                <option value="">Select Education</option>
-                @foreach (var education in educationList)
-                {
-                    <option value="@education.Name">@education.Name</option>
-                }
-            </select>
+            <MyTecCoursePWA.Components.Selectors.StyledSelector TItem="Education"
+                                                                Items="educationList"
+                                                                SelectedValue="@selectedEducationName"
+                                                                SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Education))" />
 
-            <select class="w-full rounded-lg border bg-white p-2 text-black" @bind="selectedPathwayName" @bind:after="OnPathwayChanged">
-                <option value="">Select Pathway</option>
-                @foreach (var pathway in selectedEducation?.Pathways ?? new List<Pathway>())
-                {
-                    <option value="@pathway.Name">@pathway.Name</option>
-                }
-            </select>
+            <MyTecCoursePWA.Components.Selectors.StyledSelector TItem="Pathway"
+                                                                Items="selectedEducation?.Pathways ?? new List<Pathway>()"
+                                                                SelectedValue="@selectedPathwayName"
+                                                                SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Pathway))" />
 
-            <select class="w-full rounded-lg border bg-white p-2 text-black" @bind="selectedSpecializationName" @bind:after="OnSpecializationChanged">
-                <option value="">Select Specialization</option>
-                @foreach (var specialization in selectedPathway?.Specializations ?? new List<Specialization>())
-                {
-                    <option value="@specialization.Name">@specialization.Name</option>
-                }
-            </select>
+            <MyTecCoursePWA.Components.Selectors.StyledSelector TItem="Specialization"
+                                                                Items="selectedPathway?.Specializations ?? new List<Specialization>()"
+                                                                SelectedValue="@selectedSpecializationName"
+                                                                SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Specialization))" />
 
-            <select class="w-full rounded-lg border bg-white p-2 text-black" @bind="selectedCourseName" @bind:after="OnCourseChanged">
-                <option value="">Select Course</option>
-                @foreach (var course in selectedSpecialization?.Courses ?? new List<Course>())
-                {
-                    <option value="@course.Name">@course.Name</option>
-                }
-            </select>
+            <MyTecCoursePWA.Components.Selectors.StyledSelector TItem="Course"
+                                                                Items="selectedSpecialization?.Courses ?? new List<Course>()"
+                                                                SelectedValue="@selectedCourseName"
+                                                                SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Course))" />
+
         </div>
     </div>
 
-    @* Course lists *@
     @if (!string.IsNullOrEmpty(selectedCourseName) && subjectList.Any())
     {
         <div class="space-y-6">
             @foreach (var subject in subjectList)
             {
-                <div class="space-y-4 rounded-lg border border-[var(--background)] bg-white p-6 shadow-lg">
-                    <h3 class="text-lg font-semibold text-black">@subject.Name</h3>
+                <div class="space-y-4 rounded-lg bg-white p-6 shadow-lg shadow-black">
+                    <h3 class="font-semibold text-black">@subject.Name</h3>
                     <div class="space-y-4">
                         @foreach (var milestone in subject.Milestones)
                         {
-                            <div class="rounded-lg bg-gray-50 p-4">
+                            <div class="">
                                 <h4 class="text-md font-medium text-black">@milestone.Description</h4>
                             </div>
                         }
@@ -74,15 +56,6 @@
             }
         </div>
     }
-</div>
-
-<div>
-    <MyTecCoursePWA.Components.Selectors.StyledSelector 
-    TItem="Education" 
-    Items="educationList"
-    SelectedValue="selectedEducationName"
-    SelectedValueChanged="@OnSelectedItemChanged"
-    />
 </div>
 
 @code {
@@ -99,11 +72,58 @@
     private List<Education> educationList;
     private User user;
 
-    private void OnSelectedItemChanged(string value)
+    private enum SelectionType
     {
-        Console.WriteLine(value);
-		selectedEducationName = value;
+        Education,
+        Pathway,
+        Specialization,
+        Course
     }
+
+    private void OnSelectionChanged(string value, SelectionType selectionType)
+    {
+        switch (selectionType)
+        {
+            case SelectionType.Education:
+                selectedEducationName = value;
+                selectedEducation = educationList.Find(x => x.Name == selectedEducationName);
+
+                // Ensure pathway is null and UI does not preselect one
+                selectedPathway = null;
+                selectedSpecialization = null;
+                selectedCourse = null;
+
+                selectedPathwayName = null;  // Instead of empty string
+                selectedSpecializationName = null;
+                selectedCourseName = null;
+                break;
+
+            case SelectionType.Pathway:
+                selectedPathwayName = value;
+                selectedPathway = selectedEducation?.Pathways?.Find(x => x.Name == selectedPathwayName);
+                selectedSpecialization = null;
+                selectedCourse = null;
+
+                selectedSpecializationName = null;
+                selectedCourseName = null;
+                break;
+
+            case SelectionType.Specialization:
+                selectedSpecializationName = value;
+                selectedSpecialization = selectedPathway?.Specializations?.Find(x => x.Name == selectedSpecializationName);
+                selectedCourse = null;
+                selectedCourseName = null;
+                break;
+
+            case SelectionType.Course:
+                selectedCourseName = value;
+                selectedCourse = selectedSpecialization?.Courses?.Find(x => x.Name == selectedCourseName);
+                break;
+        }
+
+        updateSubjectList();
+    }
+
 
     protected override void OnInitialized()
     {
@@ -118,72 +138,23 @@
         selectedSpecializationName = selectedSpecialization?.Name ?? "";
         selectedCourseName = selectedCourse?.Name ?? "";
 
-        // Create User on page load with default values
+
         user = new User
             {
                 Name = "John Doe",
-                SelectedEducation = selectedEducation.Name,
-                SelectedPathway = selectedPathway.Name,
-                SelectedSpecialization = selectedSpecialization.Name,
-                SelectedCourse = selectedCourse.Name
+                SelectedEducation = selectedEducation?.Name ?? "",
+                SelectedPathway = selectedPathway?.Name ?? "",
+                SelectedSpecialization = selectedSpecialization?.Name ?? "",
+                SelectedCourse = selectedCourse?.Name ?? ""
             };
 
         updateSubjectList();
     }
 
-    private void OnEducationChanged()
-    {
-        selectedEducation = educationList.FirstOrDefault(x => x.Name == selectedEducationName);
-        selectedPathway = null;
-        selectedSpecialization = null;
-        selectedCourse = null;
-
-        selectedPathwayName = "";
-        selectedSpecializationName = "";
-        selectedCourseName = "";
-
-        updateSubjectList();
-    }
-
-    private void OnPathwayChanged()
-    {
-        selectedPathway = selectedEducation?.Pathways.FirstOrDefault(x => x.Name == selectedPathwayName);
-        selectedSpecialization = null;
-        selectedCourse = null;
-
-        selectedSpecializationName = "";
-        selectedCourseName = "";
-
-        updateSubjectList();
-    }
-
-    private void OnSpecializationChanged()
-    {
-        selectedSpecialization = selectedPathway?.Specializations.FirstOrDefault(x => x.Name == selectedSpecializationName);
-        selectedCourse = null;
-        selectedCourseName = "";
-
-        updateSubjectList();
-    }
-
-    private void OnCourseChanged()
-    {
-        selectedCourse = selectedSpecialization?.Courses.FirstOrDefault(x => x.Name == selectedCourseName);
-        updateSubjectList();
-    }
-
     private void updateSubjectList()
     {
-        if (!string.IsNullOrEmpty(selectedCourseName))
-        {
-            subjectList = selectedCourse?.Subjects ?? new List<Subject>();
-        }
-        else
-        {
-            subjectList = new List<Subject>(); // Reset subjectList when no course is selected
-        }
-
-        StateHasChanged(); // Force re-render after updating the subject list
+        subjectList = selectedCourse?.Subjects ?? new List<Subject>();
+        StateHasChanged();
     }
 
     public class User
