@@ -1,6 +1,8 @@
-﻿namespace MyTecCoursePWA.Models
+﻿using MyTecCoursePWA.Interfaces;
+
+namespace MyTecCoursePWA.Models
 {
-    public class Course
+    public class Course : ISelectable
     {
         public int Id { get; set; }
         public required string Name { get; set; }

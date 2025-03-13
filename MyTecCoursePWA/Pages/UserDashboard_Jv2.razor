@@ -2,6 +2,7 @@
 @using MyTecCoursePWA.Models
 @inject MockEducationService EducationService
 
+
 @* Wrapper *@
 <div class="wrapper flex min-h-screen flex-col space-y-6 bg-gray-100 p-4">
     @* User profile card *@
@@ -75,6 +76,15 @@
     }
 </div>
 
+<div>
+    <MyTecCoursePWA.Components.Selectors.StyledSelector 
+    TItem="Education" 
+    Items="educationList"
+    SelectedValue="selectedEducationName"
+    SelectedValueChanged="@OnSelectedItemChanged"
+    />
+</div>
+
 @code {
     private string selectedEducationName;
     private string selectedPathwayName;
@@ -88,6 +98,12 @@
     private List<Subject> subjectList;
     private List<Education> educationList;
     private User user;
+
+    private void OnSelectedItemChanged(string value)
+    {
+        Console.WriteLine(value);
+		selectedEducationName = value;
+    }
 
     protected override void OnInitialized()
     {
