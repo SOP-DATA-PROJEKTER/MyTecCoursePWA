@@ -1,151 +1,99 @@
-﻿@page "/UserDashboard"
+﻿@using MyTecCoursePWA.Models;
+@page "/UserDashboard"
 
+@inject MockUserService UserService
 
+<div class="bg-gradient-to-r rounded-lg from-green-500 to-green-600 p-6 text-white shadow-md">
+    <h2 class="text-xl font-bold">Hej @User1.Name 👋</h2>
+    <p class="mt-2"><strong>Uddannelse:</strong> @User1?.SelectedEducation?.Name</p>
+    <p><strong>Retning:</strong> @User1?.SelectedPathway?.Name</p>
+    <p><strong>Specialisering:</strong> @User1?.SelectedSpecialization?.Name</p>
+    <p><strong>Kursus:</strong> @User1?.SelectedCourse?.Name</p>
 
+    <button class="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white shadow-md transition duration-300 hover:bg-blue-700 active:scale-95"
+            @onclick="GoToSubjects">
+        🎓 Se dine fag
+    </button>
+</div>
 
-
-
-@code{
-
-    public class Education
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public List<Pathway> Pathways { get; set; } = new();
-    }
-
-    public class Pathway
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public List<Specialization> Specializations { get; set; } = new();
-    }
-
-    public class Specialization
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public List<Course> Courses { get; set; } = new();
-    }
-
-    public class Course
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public List<Subject> Subjects { get; set; } = new();
-    }
-
-    public class Subject
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public List<Milestone> Milestones { get; set; } = new();
-    }
-
-    public class Milestone
-    {
-        public int Id { get; set; }
-        public string Description { get; set; } = string.Empty;
-    }
-
-    public class User
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public Pathway? SelectedPathway { get; set; }
-        public Course? SelectedCourse { get; set; }
-    }
-
-    public static class EducationData
-    {
-        public static List<Education> EducationList = new()
-    {
-        new Education
-        {
-            Id = 100,
-            Name = "EUD",
-            Description = "Erhvervsuddannelser",
-            Pathways = new List<Pathway>
+<!-- 📍 STUDIE TIDSLINJE -->
+@if (User1.SelectedSpecialization != null && User1.SelectedSpecialization.Courses != null)
+{
+    <!-- 🌍 Mobile Timeline (Auto-Center Current Course) -->
+    <div class="mt-8 flex overflow-x-auto pb-4 md:hidden" id="courseTimeline">
+        <div class="flex space-x-6 px-4">
+            @foreach (var course in User1.SelectedSpecialization.Courses)
             {
-                new Pathway
-                {
-                    Id = 200,
-                    Name = "Data og Kommunikation",
-                    Specializations = new List<Specialization>
+                bool isCurrent = (User1.CourseId == course.Id);
+                string bgColor = course.Name.Contains("Praktik") ? "bg-green-500" : "bg-violet-500";
+                string textColor = isCurrent ? "text-white font-bold" : "text-gray-200";
+                string borderColor = isCurrent ? "border-4 border-blue-500" : "border-2 border-gray-400";
+
+                <div class="relative flex min-w-[180px] flex-col items-center rounded-lg p-4 text-center shadow-md transition-transform duration-300 hover:scale-105 @bgColor @borderColor"
+                     id="course-@course.Id">
+                    @if (isCurrent)
                     {
-                        new Specialization
-                        {
-                            Id = 300,
-                            Name = "Programmering",
-                            Courses = new List<Course>
-                            {
-                                new Course
-                                {
-                                    Id = 400,
-                                    Name = "Praktikforløb 1",
-                                    Subjects = new List<Subject>
-                                    {
-                                        new Subject
-                                        {
-                                            Id = 500,
-                                            Name = "Praktisk oplæring i virksomheden",
-                                            Description = "Eleven kan føre simple opgaver hvor dataudstyr anvendes",
-                                            Milestones = new List<Milestone>
-                                            {
-                                                new Milestone { Id = 600, Description = "Eleven skal selvstændigt kunne fremstille små enkle programmer med et programmeringssprog." },
-                                                new Milestone { Id = 601, Description = "Eleven skal kunne anvende et programmeringsværktøj til udvikling af programmer." },
-                                                new Milestone { Id = 602, Description = "Eleven skal kunne anvende et versionsstyringsværktøj til at gemme og hente programmer." },
-                                                new Milestone { Id = 603, Description = "Eleven skal kunne håndtere forskellige talsystemer og benytte disse i forbindelse med f.eks. IP-adresser." }
-                                            }
-                                        }
-                                    }
-                                },
-                                new Course
-                                {
-                                    Id = 401,
-                                    Name = "Hovedforløb 1",
-                                    Subjects = new List<Subject>
-                                    {
-                                        new Subject
-                                        {
-                                            Id = 501,
-                                            Name = "Grundlæggende programmering",
-                                            Description = "I faget Grundlæggende programmering lærer du at designe, planlægge og udvikle mindre konsolprogrammer baseret på givne krav.",
-                                            Milestones = new List<Milestone>
-                                            {
-                                                new Milestone { Id = 604, Description = "Lærlingen kan selvstændigt designe, planlægge og udvikle et mindre konsolprogram baseret på en case-opgave og opfylde de stillede krav." },
-                                                new Milestone { Id = 605, Description = "Lærlingen kan anvende et programmeringssprog til at udarbejde mindre konsolprogrammer." },
-                                                new Milestone { Id = 606, Description = "Lærlingen kan vælge en hensigtsmæssig datatype til en opgave." }
-                                            }
-                                        },
-                                        new Subject
-                                        {
-                                            Id = 502,
-                                            Name = "Objektorienteret programmering",
-                                            Description = "Er under udarbejdelse (maj/2022)",
-                                            Milestones = new List<Milestone>
-                                            {
-                                                new Milestone { Id = 607, Description = "Under udarbejdelse (maj/2022)" }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        <span class="absolute -top-4 text-lg font-bold text-blue-300">🔹</span>
                     }
-                }
+                    <span class="text-sm @textColor">@course.Name</span>
+                    <span class="text-xs text-gray-100">(@(course.Subjects?.Count ?? 0) fag)</span>
+                </div>
             }
-        },
-        new Education
-        {
-            Id = 101,
-            Name = "EUX",
-            Description = "Studenterhue og Svendebrev",
-            Pathways = new List<Pathway>()
-        }
-    };
+        </div>
+    </div>
+
+    <!-- 🖥️ Desktop Timeline (Vertical List) -->
+    <div class="mt-8 hidden md:block">
+        <h3 class="text-center text-lg font-bold">📍 Din Studie Tidslinje</h3>
+        <div class="mt-4 flex flex-col items-center space-y-6">
+            @foreach (var course in User1.SelectedSpecialization.Courses)
+            {
+                bool isCurrent = (User1.CourseId == course.Id);
+                string borderColor = course.Name.Contains("Praktik") ? "border-green-500 bg-green-100" : "border-violet-500 bg-violet-100";
+                if (isCurrent)
+                {
+                    borderColor = "border-blue-500 bg-blue-100 shadow-lg scale-105";
+                }
+
+                <div class="border-2 relative flex w-full max-w-2xl items-center justify-between rounded-lg px-6 py-4 @borderColor">
+                    @if (isCurrent)
+                    {
+                        <span class="absolute -left-4 text-xl font-extrabold text-blue-600">➡</span>
+                    }
+                    <span class="text-sm font-semibold sm:text-base @(isCurrent ? "text-blue-900 font-bold" : "text-gray-700")">
+                        @course.Name @(isCurrent ? "🏆" : "")
+                    </span>
+                    <span class="text-xs text-gray-600">(@(course.Subjects?.Count ?? 0) fag)</span>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+
+    private User User1 { get; set; } = new User();
+
+    protected override void OnInitialized()
+    {
+        // Hent mock-user fra UserService
+        User1 = UserService.GetUser();
     }
 
+    private void GoToSubjects()
+    {
+        Navigation.NavigateTo("/Subjects");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("scrollToCurrentCourse", User1.CourseId);
+        }
+    }
 }
