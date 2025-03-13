@@ -19,8 +19,8 @@
 <!-- 📍 STUDIE TIDSLINJE -->
 @if (User1.SelectedSpecialization != null && User1.SelectedSpecialization.Courses != null)
 {
-    <!-- 🌍 Mobile Timeline (Horizontal Scroll) -->
-    <div class="mt-8 flex overflow-x-auto pb-4 md:hidden">
+    <!-- 🌍 Mobile Timeline (Auto-Center Current Course) -->
+    <div class="mt-8 flex overflow-x-auto pb-4 md:hidden" id="courseTimeline">
         <div class="flex space-x-6 px-4">
             @foreach (var course in User1.SelectedSpecialization.Courses)
             {
@@ -29,7 +29,8 @@
                 string textColor = isCurrent ? "text-white font-bold" : "text-gray-200";
                 string borderColor = isCurrent ? "border-4 border-blue-500" : "border-2 border-gray-400";
 
-                <div class="relative flex min-w-[180px] flex-col items-center rounded-lg p-4 text-center shadow-md transition-transform duration-300 hover:scale-105 @bgColor @borderColor">
+                <div class="relative flex min-w-[180px] flex-col items-center rounded-lg p-4 text-center shadow-md transition-transform duration-300 hover:scale-105 @bgColor @borderColor"
+                     id="course-@course.Id">
                     @if (isCurrent)
                     {
                         <span class="absolute -top-4 text-lg font-bold text-blue-300">🔹</span>
@@ -72,6 +73,8 @@
 
 @code {
     [Inject] private NavigationManager Navigation { get; set; } = default!;
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
 
     private User User1 { get; set; } = new User();
 
@@ -84,5 +87,13 @@
     private void GoToSubjects()
     {
         Navigation.NavigateTo("/Subjects");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("scrollToCurrentCourse", User1.CourseId);
+        }
     }
 }
