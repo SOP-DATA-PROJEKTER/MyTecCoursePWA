@@ -10,8 +10,8 @@
 		<div class="h-16 md:h-20 lg:h-28 xl:h-16">
 			<Navbar />
 		</div>
-		<main class="flex-grow">
-			<article class="fade-container mx-6 my-8 overflow-hidden px-4 @fadeClass">
+		<main class="flex-grow" style="background-color: @backgroundColor">
+			<article class="fade-container mx-1 my-8 overflow-hidden px-4 md:mx-6 @fadeClass">
 				@Body
 			</article>
 		</main>
@@ -23,6 +23,20 @@
 
 @code {
 	private string fadeClass = "";
+	private string backgroundColor = "transparent"; // Default color
+
+	public string BackgroundColor
+	{
+		get => backgroundColor;
+		set
+		{
+			if (backgroundColor != value)
+			{
+				backgroundColor = value;
+				StateHasChanged(); // Refresh layout when background color changes
+			}
+		}
+	}
 
 	public async Task HandleMessageFromPage(string link)
 	{
@@ -30,6 +44,8 @@
 		StateHasChanged();
 
 		await Task.Delay(250);
+
+		backgroundColor = "transparent";
 
 		NavigationManager.NavigateTo(link);
 

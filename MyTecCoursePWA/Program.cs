@@ -10,6 +10,10 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 builder.Services.AddSingleton<MockEducationService>();
+
 builder.Services.AddSingleton<MockUserService>();
+
+builder.Services.AddSingleton<MockEducationChoice>();
+
 
 await builder.Build().RunAsync();

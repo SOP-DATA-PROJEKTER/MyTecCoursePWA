@@ -62,7 +62,7 @@ Projektet handler om at skabe en app eller et website, som TEC-elever kan bruge 
 <hr>
 
 ## Tailwind
-til udvikling af tailwind - download tailwind cli og pladser den i mappen hvor projektet er (ikke solution), kør derefter denne powershell commando for at få tailwind til at generere filer ud fra de tailwind classes der bliver skrevet.
+til udvikling af tailwind - download [tailwind cli](https://github.com/tailwindlabs/tailwindcss/releases/tag/v4.0.12) og pladser den i mappen hvor projektet er (ikke solution), kør derefter denne powershell commando for at få tailwind til at generere filer ud fra de tailwind classes der bliver skrevet.
 ```
 .\tailwindcss-windows-x64.exe -i .\wwwroot\css\app.css -o .\wwwroot\css\app.min.css --watch
 ```
