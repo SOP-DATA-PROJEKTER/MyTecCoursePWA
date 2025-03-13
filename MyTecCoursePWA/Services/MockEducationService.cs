@@ -1,4 +1,6 @@
 ﻿using MyTecCoursePWA.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MyTecCoursePWA.Services
 {
@@ -82,10 +84,41 @@ namespace MyTecCoursePWA.Services
                                                 {
                                                     Id = 503,
                                                     Name = "Databaseprogrammering. Niv. Avanceret TBD",
-                                                    Description = "Eleven kan udarbejde et avanceret databasedesign, og anvende SQL syntaxen og ORM (Object Relational Mapping) til at opbygge databaser, suppleret af en tilhørende dokumentation.\n\nFaget på H1 omhandler SQL syntaxen og forståelsen af opbygningen af en relationel database, herunder dokumentation af relationstyper mellem tabeller vha. E/R-diagram. Der anvendes Microsoft SQL-Server og Microsoft SQL Server Management Studio.",
+                                                    Description = "Eleven kan udarbejde et avanceret databasedesign og anvende SQL syntaxen og ORM (Object Relational Mapping).",
                                                     Milestones = new List<Milestone>
                                                     {
                                                         new Milestone { Id = 608, Description = "Er under udarbejdelse." }
+                                                    }
+                                                },
+                                                new Subject
+                                                {
+                                                    Id = 504,
+                                                    Name = "Objekt Orienteret Analyse og Design. Niv. Rutineret",
+                                                    Description = "Under udarbejdelse (maj/2022) \n\nI version 10 udbydes faget på H1\n\nI version 10.1 udbydes faget på H3.",
+                                                    Milestones = new List<Milestone>
+                                                    {
+                                                        new Milestone { Id = 609, Description = "Er under udarbejdelse. (maj/2022)" }
+                                                    }
+                                                },
+                                                new Subject
+                                                {
+                                                    Id = 505,
+                                                    Name = "Netværk I. Niv. Rutineret",
+                                                    Description = "Kurset bygger videre på CCNA-1 og giver praktisk erfaring med opbygning og drift af et Cisco-baseret virksomhedsnetværk.",
+                                                    Milestones = new List<Milestone>
+                                                    {
+                                                        new Milestone { Id = 610, Description = "Er under udarbejdelse." }
+                                                    }
+                                                },
+                                                new Subject
+                                                {
+                                                    Id = 506,
+                                                    Name = "Clientsideprogrammering",
+                                                    Description = "Eleven opnår en grundlæggende forståelse for web-programmering med HTML, CSS og JavaScript.",
+                                                    Milestones = new List<Milestone>
+                                                    {
+                                                        new Milestone { Id = 611, Description = "Lærlingen kan foretage grundlæggende web-programmering med HTML, CSS og JavaScript." },
+                                                        new Milestone { Id = 612, Description = "Lærlingen kan forklare Client-Server modellen og HTTP-protokollen." }
                                                     }
                                                 }
                                             }
@@ -98,13 +131,13 @@ namespace MyTecCoursePWA.Services
                                             {
                                                 new Subject
                                                 {
-                                                    Id = 504,
+                                                    Id = 507,
                                                     Name = "Praktisk oplæring i virksomheden 2",
                                                     Description = "Eleven kan designe, opbygge og implementere mindre databaseløsninger.",
                                                     Milestones = new List<Milestone>
                                                     {
-                                                        new Milestone { Id = 609, Description = "Eleven kan udvikle mindre console-programmer med fokus på OOP, såsom C# og webapplikationer, der benytter HTML og CSS." },
-                                                        new Milestone { Id = 610, Description = "Virtualisering af udviklingsmiljø i fx Docker." }
+                                                        new Milestone { Id = 613, Description = "Eleven kan udvikle mindre console-programmer med fokus på OOP, såsom C# og webapplikationer." },
+                                                        new Milestone { Id = 614, Description = "Virtualisering af udviklingsmiljø i fx Docker." }
                                                     }
                                                 }
                                             }
@@ -117,24 +150,22 @@ namespace MyTecCoursePWA.Services
                                             {
                                                 new Subject
                                                 {
-                                                    Id = 505,
+                                                    Id = 508,
                                                     Name = "Objektorienteret programmering. Niv. Rutineret",
-                                                    Description = "Der arbejdes med komplekse objektorienterede begreber som call-back functions/delegates, overloading og overriding af metoder, interfaces osv. Undervisningen indeholder både konsolprogrammer og grafiske programmer. Faget indgår i \"4-ugers projektet\" og sættes i samspil med databaseteknologi samt grafiske udviklingsværktøjer for at udvikle en hel applikation.",
+                                                    Description = "Lærlingen arbejder med call-back functions, delegates, overloading, interfaces osv.",
                                                     Milestones = new List<Milestone>
                                                     {
-                                                        new Milestone { Id = 611, Description = "Lærlingen kan oprette og vedligeholde databaser." },
-                                                        new Milestone { Id = 612, Description = "Lærlingen kan udvikle API'er til backend-systemer." }
+                                                        new Milestone { Id = 615, Description = "Er under udarbejdelse." }
                                                     }
                                                 },
                                                 new Subject
                                                 {
-                                                    Id = 506,
-                                                    Name = "Webudvikling og frontend",
-                                                    Description = "Lærlingen udvikler dynamiske webapplikationer med moderne frameworks.",
+                                                    Id = 509,
+                                                    Name = "Databaseprogrammering. Niv. Avanceret",
+                                                    Description = "Lærlingen udvikler databaser, avancerede SQL-forespørgsler og håndterer stored procedures.",
                                                     Milestones = new List<Milestone>
                                                     {
-                                                        new Milestone { Id = 613, Description = "Lærlingen kan skabe responsive brugergrænseflader." },
-                                                        new Milestone { Id = 614, Description = "Lærlingen kan arbejde med REST API'er til frontend-integration." }
+                                                        new Milestone { Id = 616, Description = "Er under udarbejdelse." }
                                                     }
                                                 }
                                             }
