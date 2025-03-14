@@ -2,15 +2,13 @@
 @config "../../tailwind.config.js";
 
 :root {
-    /* --background: #ffffff; */
     --background: #f6eee3;
     --background-secondary: #282828;
-    /*--primary-color: #8b35ff;*/ /* TEC lilla */
-    --primary-color: #9d5cff; /* TEC lilla */
+    --primary-color: #9d5cff; 
     --primary-color-shade: #8b35ff; /* TEC lilla */
     --text-color: #1A1A1A;
     --text-color-secondary: white;
-    --border-color: rgba(0,0,0,0.2)
+    --border-color: rgba(0,0,0,0.2);
 }
 
 html, body {
