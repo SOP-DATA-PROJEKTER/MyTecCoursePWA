@@ -2,22 +2,22 @@
 
 <div class="group flex h-full w-full cursor-pointer justify-center" @onclick="HandleButtonClick">
     <div class="group flex h-full w-full justify-center">
-        <div class="p-4 flex h-full w-full flex-col">
+        <div class="flex h-full w-full flex-col p-4">
             <!-- Top section: Name & Arrow -->
             <div class="flex w-full items-center justify-between">
                 <span class="text-4xl font-bold transition-colors group-hover:text-[var(--primary-color)] md:text-6xl">
                     @Name
                 </span>
-                <div class="h-8 w-8 flex shrink-0 items-center justify-center sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16">
+                <div class="flex h-8 w-8 shrink-0 items-center justify-center sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 97 97" class="h-full w-full transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:rotate-6">
-                        <path d="M49 0H1V8H49H89V48V96H97V48V0H49Z" fill="var(--foreground)" class="transition-colors group-hover:fill-[var(--primary-color)]"></path>
-                        <path d="M67.3 24L75.3 16H73H64H49H1V24H49H56L0 80L5.7 85.7L67.3 24Z" fill="var(--foreground)" class="transition-colors group-hover:fill-[var(--primary-color)]"></path>
-                        <path d="M73 29.7L11.3 91.3L17 97L73 41V48V96H81V48V33V24V21.7L73 29.7Z" fill="var(--foreground)" class="transition-colors group-hover:fill-[var(--primary-color)]"></path>
+                        <path d="M49 0H1V8H49H89V48V96H97V48V0H49Z" fill="var(--text-color)" class="transition-colors group-hover:fill-[var(--primary-color)]"></path>
+                        <path d="M67.3 24L75.3 16H73H64H49H1V24H49H56L0 80L5.7 85.7L67.3 24Z" fill="var(--text-color)" class="transition-colors group-hover:fill-[var(--primary-color)]"></path>
+                        <path d="M73 29.7L11.3 91.3L17 97L73 41V48V96H81V48V33V24V21.7L73 29.7Z" fill="var(--text-color)" class="transition-colors group-hover:fill-[var(--primary-color)]"></path>
                     </svg>
                 </div>
             </div>
 
-            <span class="mt-6 text-gray-700 text-lg transition-colors group-hover:text-[var(--primary-color)] md:text-2xl">
+            <span class="mt-6 text-lg text-gray-700 transition-colors group-hover:text-[var(--primary-color)] md:text-2xl">
                 @Description
             </span>
         </div>
