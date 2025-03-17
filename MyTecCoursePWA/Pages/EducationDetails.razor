@@ -18,7 +18,7 @@ else
             <h3 class="text-lg font-semibold md:text-xl lg:text-2xl xl:text-lg">@education.Name</h3>
 
             <!-- Pathway Selection -->
-            <div class="mt-2 gap-2 flex flex-wrap">
+            <div class="mt-2 flex flex-wrap gap-2">
                 @foreach (var pathway in education.Pathways)
                 {
                     bool isPathwaySelected = SelectedPathwayId == pathway.Id;
@@ -42,7 +42,7 @@ else
                 {
                     <div class="mt-2">
                         <h4 class="text-base font-semibold md:text-lg lg:text-xl xl:text-base">Vælg en specialisering:</h4>
-                        <div class="mt-1 gap-2 flex flex-wrap">
+                        <div class="mt-1 flex flex-wrap gap-2">
                             @foreach (var specialization in selectedPathway.Specializations)
                             {
                                 bool isSpecializationSelected = SelectedSpecializationId == specialization.Id;
@@ -71,7 +71,7 @@ else
                 {
                     <div class="mt-2">
                         <h4 class="text-base font-semibold md:text-lg lg:text-xl xl:text-base">Vælg et forløb:</h4>
-                        <div class="mt-1 gap-2 flex flex-wrap">
+                        <div class="mt-1 flex flex-wrap gap-2">
                             @foreach (var course in selectedSpecialization.Courses)
                             {
                                 bool isCourseSelected = SelectedCourseId == course.Id;
@@ -92,14 +92,14 @@ else
                             var selectedCourse = selectedSpecialization.Courses.FirstOrDefault(c => c.Id == SelectedCourseId);
                             if (selectedCourse != null)
                             {
-                                <div class="mt-2 border-blue-500 bg-gray-200 p-4 rounded-md border-l-4 transition-colors duration-200">
+                                <div class="mt-2 rounded-md border-l-4 border-blue-500 bg-gray-200 p-4 transition-colors duration-200">
                                     @if (selectedCourse.Subjects.Any())
                                     {
                                         @foreach (var subject in selectedCourse.Subjects)
                                         {
-                                            <div key="@subject.Id" class="mb-4 bg-gray-300 p-4 rounded-md">
+                                            <div key="@subject.Id" class="mb-4 rounded-md bg-gray-300 p-4">
                                                 <!-- Subject button to expand details -->
-                                                <button class="bg-gray-300 p-2 text-gray-900 flex w-full cursor-pointer items-center justify-between rounded-md text-left font-semibold transition hover:bg-blue-500 hover:text-white"
+                                                <button class="flex w-full cursor-pointer items-center justify-between rounded-md bg-gray-300 p-2 text-left font-semibold text-gray-900 transition hover:bg-blue-500 hover:text-white"
                                                     @onclick="() => ToggleSubject(subject.Id)">
                                                     @subject.Name <span>@(ExpandedSubjects.Contains(subject.Id) ? "🔼" : "🔽")</span>
                                                 </button>
@@ -107,9 +107,18 @@ else
                                                 <!-- Show subject details when expanded -->
                                                 @if (ExpandedSubjects.Contains(subject.Id))
                                                 {
-                                                    <div class="mt-2 bg-gray-200 p-2 text-gray-900 rounded-md">
-                                                        <h4 class="mt-3 text-blue-500 text-base font-semibold md:text-lg lg:text-xl xl:text-base">🚀 Milepæle:</h4>
-                                                        <ul class="pl-4 list-disc">
+                                                    <div class="mt-2 rounded-md bg-gray-200 p-2 text-gray-900">
+                                                        <h4 class="mt-3 text-base font-semibold text-blue-500 md:text-lg lg:text-xl xl:text-base">📖  Fagbeskrivelse:
+                                                        </h4>
+                                                        <ul class="list-disc pl-4">
+                                                            <li class="text-base md:text-lg lg:text-xl xl:text-base">@subject.Description</li>
+
+                                                        </ul>
+                                                    </div>
+                                                    <div class="mt-2 rounded-md bg-gray-200 p-2 text-gray-900">
+
+                                                        <h4 class="mt-3 text-base font-semibold text-blue-500 md:text-lg lg:text-xl xl:text-base">✔️ Målpinde:</h4>
+                                                        <ul class="list-disc pl-4">
                                                             @foreach (var milestone in subject.Milestones)
                                                             {
                                                                 <li class="text-base md:text-lg lg:text-xl xl:text-base">@milestone.Description</li>
