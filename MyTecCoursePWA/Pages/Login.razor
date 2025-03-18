@@ -60,11 +60,6 @@
 
     [CascadingParameter] public MainLayout Layout { get; set; }
 
-    protected override void OnInitialized()
-    {
-        // Update the background color when the login page is loaded
-        Layout.BackgroundColor = "transparent";
-    }
 
     private void HandleLogin()
     {

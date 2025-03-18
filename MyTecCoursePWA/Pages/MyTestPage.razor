@@ -1,0 +1,104 @@
+﻿@page "/MyTestPage"
+@using MyTecCoursePWA.Models
+@inject MockEducationService EducationService
+
+<select @bind="SelectedEducation" @onchange="OnEducationChange">
+    <option value="">Select Education</option>
+    @foreach (var education in EducationList)
+    {
+        <option value="@education.Id">@education.Name</option>
+    }
+</select>
+
+@if (Pathways != null && Pathways.Any())
+{
+    <select @bind="SelectedPathway" @onchange="OnPathwayChange">
+        <option value="">Select Pathway</option>
+        @foreach (var pathway in Pathways)
+        {
+            <option value="@pathway.Id">@pathway.Name</option>
+        }
+    </select>
+}
+
+@if (Specializations != null && Specializations.Any())
+{
+    <select @bind="SelectedSpecialization" @onchange="OnSpecializationChange">
+        <option value="">Select Specialization</option>
+        @foreach (var specialization in Specializations)
+        {
+            <option value="@specialization.Id">@specialization.Name</option>
+        }
+    </select>
+}
+
+@if (Courses != null && Courses.Any())
+{
+    <select @bind="SelectedCourse" @onchange="OnCourseChange">
+        <option value="">Select Course</option>
+        @foreach (var course in Courses)
+        {
+            <option value="@course.Id">@course.Name</option>
+        }
+    </select>
+}
+
+@if (Subjects != null && Subjects.Any())
+{
+    <select @bind="SelectedSubject">
+        <option value="">Select Subject</option>
+        @foreach (var subject in Subjects)
+        {
+            <option value="@subject.Id">@subject.Name</option>
+        }
+    </select>
+}
+
+@code {
+    private List<Education> EducationList = new();
+    private List<Pathway> Pathways = new();
+    private List<Specialization> Specializations = new();
+    private List<Course> Courses = new();
+    private List<Subject> Subjects = new();
+    
+    private int? SelectedEducation;
+    private int? SelectedPathway;
+    private int? SelectedSpecialization;
+    private int? SelectedCourse;
+    private int? SelectedSubject;
+
+    protected override void OnInitialized()
+    {
+        EducationList = EducationService.GetEducationList();
+    }
+
+    private void OnEducationChange(ChangeEventArgs e)
+    {
+        SelectedEducation = int.TryParse(e.Value?.ToString(), out var id) ? id : (int?)null;
+        Pathways = EducationList.FirstOrDefault(e => e.Id == SelectedEducation)?.Pathways ?? new();
+        Specializations = new();
+        Courses = new();
+        Subjects = new();
+    }
+
+    private void OnPathwayChange(ChangeEventArgs e)
+    {
+        SelectedPathway = int.TryParse(e.Value?.ToString(), out var id) ? id : (int?)null;
+        Specializations = Pathways.FirstOrDefault(p => p.Id == SelectedPathway)?.Specializations ?? new();
+        Courses = new();
+        Subjects = new();
+    }
+
+    private void OnSpecializationChange(ChangeEventArgs e)
+    {
+        SelectedSpecialization = int.TryParse(e.Value?.ToString(), out var id) ? id : (int?)null;
+        Courses = Specializations.FirstOrDefault(s => s.Id == SelectedSpecialization)?.Courses ?? new();
+        Subjects = new();
+    }
+
+    private void OnCourseChange(ChangeEventArgs e)
+    {
+        SelectedCourse = int.TryParse(e.Value?.ToString(), out var id) ? id : (int?)null;
+        Subjects = Courses.FirstOrDefault(c => c.Id == SelectedCourse)?.Subjects ?? new();
+    }
+}

@@ -2,12 +2,12 @@
 @config "../../tailwind.config.js";
 
 :root {
-    --background: #f6eee3;
+    --background: #FFF;
     --background-secondary: #282828;
-    --primary-color: #9d5cff; 
+    --primary-color: #9d5cff;
     --primary-color-shade: #8b35ff; /* TEC lilla */
-    --text-color: #1A1A1A;
-    --text-color-secondary: white;
+    --text-color: #282828;
+    --text-color-secondary: #FFF;
     --border-color: rgba(0,0,0,0.2);
 }
 
