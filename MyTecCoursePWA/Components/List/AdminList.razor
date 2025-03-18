@@ -1,0 +1,36 @@
+﻿@using MyTecCoursePWA.Models
+@using MyTecCoursePWA.Components.Buttons
+@using System.Linq.Expressions
+
+@typeparam TItem
+
+<div class="mt-6 rounded border p-4">
+    @if (Items != null && Items.Any())
+    {
+        @for (int i = 0; i < Items.Count; i++)
+        {
+            var item = Items[i];
+            var rowClass = i % 2 == 0 ? "bg-white" : "bg-gray-100"; // Every 2nd entry is gray
+
+            <div class="@($"flex items-center justify-between p-2 {rowClass}")">
+                <span>@GetItemName(item)</span>
+
+                <div class="flex space-x-2">
+                    <AdminActionButton ButtonType="edit" Icon="✏️" Text="Rediger" OnClick="() => OnEdit.InvokeAsync(item)" />
+                    <AdminActionButton ButtonType="delete" Icon="🗑" Text="Slet" OnClick="() => OnDelete.InvokeAsync(item)" />
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-gray-500">⚠️ Ingen elementer fundet.</p>
+    }
+</div>
+
+@code {
+    [Parameter] public List<TItem> Items { get; set; } = new();
+    [Parameter] public Func<TItem, string> GetItemName { get; set; } = default!;
+    [Parameter] public EventCallback<TItem> OnEdit { get; set; }
+    [Parameter] public EventCallback<TItem> OnDelete { get; set; }
+}

@@ -1,0 +1,239 @@
+﻿@using MyTecCoursePWA.Models;
+@using MyTecCoursePWA.Components.Buttons
+@using MyTecCoursePWA.Components.List;
+@using MyTecCoursePWA.Components.Modals; 
+
+@page "/AdminSubjects"
+@inject MockEducationService EducationService
+
+<div class="p-6">
+    <h2 class="text-xl font-bold">📑 Administrer Fag</h2>
+    <p class="text-gray-500">Her kan du oprette, redigere og slette fag.</p>
+
+    <!-- Select Education -->
+    <label class="mt-4 block text-sm font-semibold">Vælg Uddannelse:</label>
+    <select class="mt-2 w-full rounded border p-2" @bind="SelectedEducationId">
+        <option value="0">-- Vælg en uddannelse --</option>
+        @foreach (var edu in EducationList)
+        {
+            <option value="@edu.Id">@edu.Name</option>
+        }
+    </select>
+
+    <!-- Select Pathway -->
+    <label class="mt-4 block text-sm font-semibold">Vælg Retning:</label>
+    <select class="mt-2 w-full rounded border p-2" @bind="SelectedPathwayId" disabled="@(SelectedEducation == null)">
+        <option value="0">-- Vælg en retning --</option>
+        @if (SelectedEducation != null)
+        {
+            @foreach (var path in SelectedEducation.Pathways)
+            {
+                <option value="@path.Id">@path.Name</option>
+            }
+        }
+    </select>
+
+    <!-- Select Specialization -->
+    <label class="mt-4 block text-sm font-semibold">Vælg Specialisering:</label>
+    <select class="mt-2 w-full rounded border p-2" @bind="SelectedSpecializationId" disabled="@(SelectedPathway == null)">
+        <option value="0">-- Vælg en specialisering --</option>
+        @if (SelectedPathway != null)
+        {
+            @foreach (var spec in SelectedPathway.Specializations)
+            {
+                <option value="@spec.Id">@spec.Name</option>
+            }
+        }
+    </select>
+
+    <!-- Select Course -->
+    <label class="mt-4 block text-sm font-semibold">Vælg Forløb:</label>
+    <select class="mt-2 w-full rounded border p-2" @bind="SelectedCourseId" disabled="@(SelectedSpecialization == null)">
+        <option value="0">-- Vælg et forløb --</option>
+        @if (SelectedSpecialization != null)
+        {
+            @foreach (var course in SelectedSpecialization.Courses)
+            {
+                <option value="@course.Id">@course.Name</option>
+            }
+        }
+    </select>
+
+    <!-- Add Subject (Only Visible if Course is Selected) -->
+    @if (SelectedCourse != null)
+    {
+        <div class="mt-4 flex items-center space-x-2">
+            <input type="text" class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
+                   placeholder="Indtast fagets navn..."
+                   @bind="NewSubjectName"
+                   @bind:event="oninput" />
+
+            <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
+                               OnClick="AddSubject"
+                               IsDisabled="@(string.IsNullOrWhiteSpace(NewSubjectName))" />
+        </div>
+    }
+
+    <!-- Subject List -->
+    <div class="mt-6 rounded border p-4">
+        <h3 class="text-lg font-semibold">Fag for: @(SelectedCourse?.Name ?? "Ingen valgt")</h3>
+
+        @if (SelectedCourse != null && SelectedCourse.Subjects.Any())
+        {
+            <AdminList TItem="Subject"
+                       Items="SelectedCourse.Subjects"
+                       GetItemName="s => s.Name"
+                       OnEdit="EditSubject"
+                       OnDelete="DeleteSubject" />
+        }
+        else
+        {
+            <p class="text-gray-500">⚠️ Ingen fag fundet. Vælg et forløb eller tilføj et.</p>
+        }
+    </div>
+
+    <!-- Edit Subject Modal (Only Visible When Editing) -->
+    @if (IsEditingSubject) 
+    { 
+         <EditSubjectModal EditingSubject="EditingSubject"
+                           OnClose="CloseEditModal"
+                           OnSave="SaveEditedSubject" />
+    }
+
+
+
+</div>
+
+@code {
+    private List<Education> EducationList = new();
+
+    private int SelectedEducationId
+    {
+        get => _selectedEducationId;
+        set
+        {
+            _selectedEducationId = value;
+            SelectedEducation = EducationList.FirstOrDefault(e => e.Id == value);
+            SelectedPathway = null;
+            SelectedSpecialization = null;
+            SelectedCourse = null;
+            SelectedPathwayId = 0;
+            SelectedSpecializationId = 0;
+            SelectedCourseId = 0;
+            StateHasChanged();
+        }
+    }
+    private int _selectedEducationId = 0;
+    private Education? SelectedEducation;
+
+    private int SelectedPathwayId
+    {
+        get => _selectedPathwayId;
+        set
+        {
+            _selectedPathwayId = value;
+            SelectedPathway = SelectedEducation?.Pathways.FirstOrDefault(p => p.Id == value);
+            SelectedSpecialization = null;
+            SelectedCourse = null;
+            SelectedSpecializationId = 0;
+            SelectedCourseId = 0;
+            StateHasChanged();
+        }
+    }
+    private int _selectedPathwayId = 0;
+    private Pathway? SelectedPathway;
+
+    private int SelectedSpecializationId
+    {
+        get => _selectedSpecializationId;
+        set
+        {
+            _selectedSpecializationId = value;
+            SelectedSpecialization = SelectedPathway?.Specializations.FirstOrDefault(s => s.Id == value);
+            SelectedCourse = null;
+            SelectedCourseId = 0;
+            StateHasChanged();
+        }
+    }
+    private int _selectedSpecializationId = 0;
+    private Specialization? SelectedSpecialization;
+
+    private int SelectedCourseId
+    {
+        get => _selectedCourseId;
+        set
+        {
+            _selectedCourseId = value;
+            SelectedCourse = SelectedSpecialization?.Courses.FirstOrDefault(c => c.Id == value);
+            StateHasChanged();
+        }
+    }
+    private int _selectedCourseId = 0;
+    private Course? SelectedCourse;
+
+    private string NewSubjectName = "";
+    private bool IsEditingSubject = false;
+    private Subject EditingSubject = new() { Name = string.Empty };
+
+    protected override void OnInitialized()
+    {
+        EducationList = EducationService.GetEducationList();
+    }
+
+    private void AddSubject()
+    {
+        if (SelectedCourse != null && !string.IsNullOrWhiteSpace(NewSubjectName))
+        {
+            var newSubject = new Subject { Id = new Random().Next(1000, 9999), Name = NewSubjectName };
+            SelectedCourse.Subjects = SelectedCourse.Subjects.Append(newSubject).ToList();
+            NewSubjectName = "";
+            StateHasChanged();
+        }
+    }
+
+    private void EditSubject(Subject subject)
+    {
+        Console.WriteLine($"Editing subject: {subject.Name}"); // Debugging output
+
+        EditingSubject = new Subject
+            {
+                Id = subject.Id,
+                Name = subject.Name,
+                Description = subject.Description,
+                Milestones = subject.Milestones.Select(m => new Milestone { Id = m.Id, Description = m.Description }).ToList()
+            };
+
+        IsEditingSubject = true;
+        StateHasChanged(); // 🔥 Force UI refresh
+    }
+
+
+
+
+    private void CloseEditModal()
+    {
+        IsEditingSubject = false;
+    }
+
+    private void SaveEditedSubject(Subject updatedSubject)
+    {
+        var subject = SelectedCourse?.Subjects.FirstOrDefault(s => s.Id == updatedSubject.Id);
+        if (subject != null)
+        {
+            subject.Name = updatedSubject.Name;
+            subject.Description = updatedSubject.Description;
+            subject.Milestones = updatedSubject.Milestones;
+        }
+        IsEditingSubject = false;
+        StateHasChanged();
+    }
+
+    private void DeleteSubject(Subject subject)
+    {
+        if (SelectedCourse != null)
+        {
+            SelectedCourse.Subjects = SelectedCourse.Subjects.Where(s => s.Id != subject.Id).ToList();
+            StateHasChanged();
+        }
+    }
+}

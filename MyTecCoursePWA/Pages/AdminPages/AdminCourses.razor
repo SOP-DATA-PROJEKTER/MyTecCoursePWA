@@ -1,0 +1,160 @@
+﻿@using MyTecCoursePWA.Models;
+@using MyTecCoursePWA.Components.Buttons;
+@using MyTecCoursePWA.Components.List;
+@page "/AdminCourses"
+@inject MockEducationService EducationService
+
+<div class="p-6">
+    <h2 class="text-xl font-bold">📖 Administrer Forløb</h2>
+    <p class="text-gray-500">Her kan du oprette, redigere og slette forløb.</p>
+
+    <!-- Select Education -->
+    <label class="mt-4 block text-sm font-semibold">Vælg Uddannelse:</label>
+    <select class="mt-2 w-full rounded border p-2" @bind="SelectedEducationId">
+        <option value="0">-- Vælg en uddannelse --</option>
+        @foreach (var edu in EducationList)
+        {
+            <option value="@edu.Id">@edu.Name</option>
+        }
+    </select>
+
+    <!-- Select Pathway -->
+    <label class="mt-4 block text-sm font-semibold">Vælg Retning:</label>
+    <select class="mt-2 w-full rounded border p-2" @bind="SelectedPathwayId" disabled="@(SelectedEducation == null)">
+        <option value="0">-- Vælg en retning --</option>
+        @if (SelectedEducation != null)
+        {
+            @foreach (var path in SelectedEducation.Pathways)
+            {
+                <option value="@path.Id">@path.Name</option>
+            }
+        }
+    </select>
+
+    <!-- Select Specialization -->
+    <label class="mt-4 block text-sm font-semibold">Vælg Specialisering:</label>
+    <select class="mt-2 w-full rounded border p-2" @bind="SelectedSpecializationId" disabled="@(SelectedPathway == null)">
+        <option value="0">-- Vælg en specialisering --</option>
+        @if (SelectedPathway != null)
+        {
+            @foreach (var spec in SelectedPathway.Specializations)
+            {
+                <option value="@spec.Id">@spec.Name</option>
+            }
+        }
+    </select>
+
+    <!-- Add Course (Only Visible if Specialization is Selected) -->
+    @if (SelectedSpecialization != null)
+    {
+        <div class="mt-4 flex items-center space-x-2">
+            <input type="text" class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
+                   placeholder="Indtast forløbets navn..."
+                   @bind="NewCourseName"
+                   @bind:event="oninput" />
+
+            <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
+                               OnClick="AddCourse"
+                               IsDisabled="@(string.IsNullOrWhiteSpace(NewCourseName))" />
+        </div>
+    }
+
+    <!-- Course List (Ensures courses are displayed when Specialization is selected) -->
+    <div class="mt-6 rounded border p-4">
+        <h3 class="text-lg font-semibold">Forløb for: @(SelectedSpecialization?.Name ?? "Ingen valgt")</h3>
+
+        @if (SelectedSpecialization != null && SelectedSpecialization.Courses.Any())
+        {
+            <AdminList TItem="Course"
+                       Items="SelectedSpecialization.Courses"
+                       GetItemName="c => c.Name"
+                       OnEdit="EditCourse"
+                       OnDelete="DeleteCourse" />
+        }
+        else
+        {
+            <p class="text-gray-500">⚠️ Ingen forløb fundet. Vælg en specialisering eller tilføj en.</p>
+        }
+    </div>
+</div>
+
+@code {
+    private List<Education> EducationList = new();
+
+    private int SelectedEducationId
+    {
+        get => _selectedEducationId;
+        set
+        {
+            _selectedEducationId = value;
+            SelectedEducation = EducationList.FirstOrDefault(e => e.Id == value);
+            SelectedPathway = null;
+            SelectedSpecialization = null;
+            SelectedPathwayId = 0;
+            SelectedSpecializationId = 0;
+            StateHasChanged();
+        }
+    }
+    private int _selectedEducationId = 0;
+    private Education? SelectedEducation;
+
+    private int SelectedPathwayId
+    {
+        get => _selectedPathwayId;
+        set
+        {
+            _selectedPathwayId = value;
+            SelectedPathway = SelectedEducation?.Pathways.FirstOrDefault(p => p.Id == value);
+            SelectedSpecialization = null;
+            SelectedSpecializationId = 0;
+            StateHasChanged();
+        }
+    }
+    private int _selectedPathwayId = 0;
+    private Pathway? SelectedPathway;
+
+    private int SelectedSpecializationId
+    {
+        get => _selectedSpecializationId;
+        set
+        {
+            _selectedSpecializationId = value;
+            SelectedSpecialization = SelectedPathway?.Specializations.FirstOrDefault(s => s.Id == value);
+            StateHasChanged();
+        }
+    }
+    private int _selectedSpecializationId = 0;
+    private Specialization? SelectedSpecialization;
+
+    private string NewCourseName = "";
+
+    protected override void OnInitialized()
+    {
+        EducationList = EducationService.GetEducationList();
+    }
+
+    private void AddCourse()
+    {
+        if (SelectedSpecialization != null && !string.IsNullOrWhiteSpace(NewCourseName))
+        {
+            var newCourse = new Course { Id = new Random().Next(1000, 9999), Name = NewCourseName };
+            SelectedSpecialization.Courses = SelectedSpecialization.Courses.Append(newCourse).ToList();
+            NewCourseName = "";
+            StateHasChanged();
+        }
+    }
+
+    private void EditCourse(Course course)
+    {
+        // Logic to edit course
+    }
+
+    private void DeleteCourse(Course course)
+    {
+        if (SelectedSpecialization != null)
+        {
+            SelectedSpecialization.Courses = SelectedSpecialization.Courses.Where(c => c.Id != course.Id).ToList();
+            StateHasChanged();
+        }
+    }
+}

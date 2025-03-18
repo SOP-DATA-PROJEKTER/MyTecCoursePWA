@@ -1,0 +1,64 @@
+﻿@using MyTecCoursePWA.Models;
+@using MyTecCoursePWA.Components.Buttons;
+@using MyTecCoursePWA.Components.List;
+@page "/AdminEducation"
+
+<div class="p-6">
+    <h2 class="text-xl font-bold">📚 Administrer Uddannelser</h2>
+    <p class="text-gray-500">Her kan du oprette, redigere og slette uddannelser.</p>
+
+    <!-- Add New Education Input + Button -->
+    <div class="mt-4 flex items-center space-x-2">
+        <!-- Input Field for Education Name -->
+        <input type="text"
+               class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
+               placeholder="Indtast uddannelsens navn..."
+               @bind="NewEducationName"
+               @bind:event="oninput" />
+
+        <!-- Add Button (Disabled if Input is Empty) -->
+        <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
+                           OnClick="AddEducation"
+                           IsDisabled="@(string.IsNullOrWhiteSpace(NewEducationName))" />
+    </div>
+
+    <!-- Reusable List Component -->
+    <AdminList TItem="Education"
+               Items="EducationList"
+               GetItemName="e => e.Name"
+               OnEdit="EditEducation"
+               OnDelete="DeleteEducation" />
+
+</div>
+
+@code {
+    [Inject] private MockEducationService EducationService { get; set; }
+
+    private List<Education> EducationList = new();
+    private string NewEducationName = "";
+
+    protected override void OnInitialized()
+    {
+        EducationList = EducationService.GetEducationList();
+    }
+
+    private void AddEducation()
+    {
+        if (!string.IsNullOrWhiteSpace(NewEducationName))
+        {
+            var newEducation = new Education { Id = new Random().Next(1000, 9999), Name = NewEducationName };
+            EducationList.Add(newEducation);
+            NewEducationName = ""; // Clear input field after adding
+        }
+    }
+
+    private void EditEducation(Education edu)
+    {
+        // Open modal or inline editing logic
+    }
+
+    private void DeleteEducation(Education edu)
+    {
+        EducationList.Remove(edu);
+    }
+}

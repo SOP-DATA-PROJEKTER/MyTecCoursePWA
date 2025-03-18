@@ -1,0 +1,112 @@
+﻿@using MyTecCoursePWA.Models;
+@using MyTecCoursePWA.Components.Buttons;
+@using MyTecCoursePWA.Components.List;
+@inject MockEducationService EducationService
+
+<div class="p-6">
+    <h2 class="text-xl font-bold">📘 Administrer Retninger</h2>
+    <p class="text-gray-500">Vælg en uddannelse før du tilføjer eller redigerer retninger.</p>
+
+    <!-- Select Education -->
+    <label class="mt-4 block text-sm font-semibold">Vælg Uddannelse:</label>
+    <select class="mt-2 w-full rounded border p-2" @bind="SelectedEducationId">
+        <option value="0">-- Vælg en uddannelse --</option>
+        @foreach (var edu in EducationList)
+        {
+            <option value="@edu.Id">@edu.Name</option>
+        }
+    </select>
+
+
+    @if (SelectedEducation != null)
+    {
+        <div class="mt-4 flex items-center space-x-2">
+            <!-- Input Field for Pathway Name -->
+            <input type="text"
+                   class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
+                   placeholder="Indtast retningens navn..."
+                   @bind="NewPathwayName"
+                   @bind:event="oninput" />
+
+            <!-- Add Button (Disabled if Input is Empty) -->
+            <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
+                               OnClick="AddPathway"
+                               IsDisabled="@(string.IsNullOrWhiteSpace(NewPathwayName))" />
+        </div>
+    }
+
+    <!-- Display Pathways only if an Education is selected -->
+    <div class="mt-6 rounded border p-4">
+        <h3 class="text-lg font-semibold">Retninger for: @(SelectedEducation?.Name ?? "Ingen valgt")</h3>
+
+        @if (SelectedEducation != null && SelectedEducation.Pathways.Any())
+        {
+            <AdminList TItem="Pathway"
+                       Items="SelectedEducation.Pathways"
+                       GetItemName="p => p.Name"
+                       OnEdit="EditPathway"
+                       OnDelete="DeletePathway" />
+        }
+        else
+        {
+            <p class="text-gray-500">⚠️ Ingen retninger fundet. Vælg en uddannelse eller tilføj en.</p>
+        }
+    </div>
+
+
+</div>
+
+@code {
+    private List<Education> EducationList = new();
+    private int SelectedEducationId
+    {
+        get => _selectedEducationId;
+        set
+        {
+            _selectedEducationId = value;
+            SelectedEducation = EducationList.FirstOrDefault(e => e.Id == value);
+            NewPathwayName = ""; // Reset input when selecting a new Education
+            StateHasChanged(); // 🔥 Ensure UI refresh
+        }
+    }
+    private int _selectedEducationId = 0;
+    private Education? SelectedEducation;
+    private string NewPathwayName = ""; // Stores the input for a new pathway
+
+    protected override void OnInitialized()
+    {
+        EducationList = EducationService.GetEducationList();
+    }
+
+    private void AddPathway()
+    {
+        if (SelectedEducation != null && !string.IsNullOrWhiteSpace(NewPathwayName))
+        {
+            var newPathway = new Pathway
+                {
+                    Id = new Random().Next(1000, 9999),
+                    Name = NewPathwayName
+                };
+            SelectedEducation.Pathways = SelectedEducation.Pathways.Append(newPathway).ToList();
+
+            // Clear input field after adding
+            NewPathwayName = "";
+            StateHasChanged();
+        }
+    }
+
+    private void EditPathway(Pathway path)
+    {
+        // TODO: Implement edit functionality (e.g., open modal or inline edit)
+    }
+
+    private void DeletePathway(Pathway path)
+    {
+        if (SelectedEducation != null)
+        {
+            SelectedEducation.Pathways = SelectedEducation.Pathways.Where(p => p.Id != path.Id).ToList();
+            StateHasChanged();
+        }
+    }
+}
+
