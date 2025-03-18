@@ -9,6 +9,7 @@
     --primary-color-shade: #9d5cff; /* TEC lilla */
     --text-color: #1A1A1A;
     --text-color-secondary: white;
+    --modal-bg: rgba(0, 0, 0,0.8)
 }
 
 html, body {
