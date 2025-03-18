@@ -1,58 +1,74 @@
 ﻿@page "/MyTestPage"
 @using MyTecCoursePWA.Models
+@using MyTecCoursePWA.Components.Selectors
 @inject MockEducationService EducationService
+@inject NavigationManager NavigationManager
 
-<select @bind="SelectedEducation" @onchange="OnEducationChange">
-    <option value="">Select Education</option>
-    @foreach (var education in EducationList)
+<div class="flex w-full items-center justify-center font-bold">
+
+    <h3 class="text-2xl">
+        Administrator Panel
+    </h3>
+
+</div>
+
+<div class="flex w-full flex-col py-2 font-bold lg:py-8 lg:flex-wrap lg:flex-row lg:justify-center">
+    <div class="m-4 flex max-h-min flex-col rounded py-2 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+        <StyledSelector Items="EducationList" SelectedValue="SelectedEducation" SelectedValueChanged="OnEducationChange" />
+        <button class="mt-2 rounded-lg bg-purple-500 px-4 py-2 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Education))">TILFØJ UDDANNELSE</button>
+
+    </div>
+
+    @if (Pathways.Any())
     {
-        <option value="@education.Id">@education.Name</option>
+        <div class="m-4 flex max-h-min flex-col rounded py-1 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+            <StyledSelector Items="Pathways" SelectedValue="SelectedPathway" SelectedValueChanged="OnPathwayChange" />
+            <button class="mt-2 rounded-lg bg-purple-500 px-4 py-2 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Pathway))">TILFØJ UDDANNELSES RETNING</button>
+        </div>
     }
-</select>
 
-@if (Pathways != null && Pathways.Any())
-{
-    <select @bind="SelectedPathway" @onchange="OnPathwayChange">
-        <option value="">Select Pathway</option>
-        @foreach (var pathway in Pathways)
-        {
-            <option value="@pathway.Id">@pathway.Name</option>
-        }
-    </select>
-}
+    @if (Specializations.Any())
+    {
+        <div class="m-4 flex max-h-min flex-col rounded py-1 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+            <StyledSelector Items="Specializations" SelectedValue="SelectedSpecialization" SelectedValueChanged="OnSpecializationChange" />
+            <button class="mt-2 rounded-lg bg-purple-500 px-4 py-2 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Specialization))">TILFØJ SPECIALE</button>
+        </div>
+    }
 
-@if (Specializations != null && Specializations.Any())
-{
-    <select @bind="SelectedSpecialization" @onchange="OnSpecializationChange">
-        <option value="">Select Specialization</option>
-        @foreach (var specialization in Specializations)
-        {
-            <option value="@specialization.Id">@specialization.Name</option>
-        }
-    </select>
-}
+    @if (Courses.Any())
+    {
+        <div class="m-4 flex max-h-min flex-col rounded py-1 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+            <StyledSelector Items="Courses" SelectedValue="SelectedCourse" SelectedValueChanged="OnCourseChange" />
+            <button class="mt-2 rounded-lg bg-purple-500 px-4 py-2 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Course))">TILFØJ FORLØB</button>
+        </div>
+    }
 
-@if (Courses != null && Courses.Any())
-{
-    <select @bind="SelectedCourse" @onchange="OnCourseChange">
-        <option value="">Select Course</option>
-        @foreach (var course in Courses)
-        {
-            <option value="@course.Id">@course.Name</option>
-        }
-    </select>
-}
+    @if (Subjects.Any())
+    {
+        <div class="m-4 flex max-h-min flex-col rounded py-1 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+            <StyledSelector Items="Subjects" SelectedValue="SelectedSubject" SelectedValueChanged="OnSubjectChange" />
+            <button class="mt-2 rounded-lg bg-purple-500 px-4 py-2 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Subject))">TILFØJ FAG</button>
+        </div>
+    }
 
-@if (Subjects != null && Subjects.Any())
-{
-    <select @bind="SelectedSubject">
-        <option value="">Select Subject</option>
-        @foreach (var subject in Subjects)
-        {
-            <option value="@subject.Id">@subject.Name</option>
-        }
-    </select>
-}
+    @if (Milestones.Any())
+    {
+        <div class="m-4 flex max-h-min flex-col rounded py-1 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+            <div>
+                <ul class="mx-2">
+                    @foreach(var milestone in Milestones)
+                    {
+                        <li class="my-4">
+                            @milestone.Description
+                        </li>
+                        <hr>
+                    }
+                </ul>
+            </div>
+            <button class="mt-4 rounded-lg bg-purple-500 px-4 py-1 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Milestone))">TILFØJ MILEPÆL</button>
+        </div>
+    }
+</div>
 
 @code {
     private List<Education> EducationList = new();
@@ -60,45 +76,66 @@
     private List<Specialization> Specializations = new();
     private List<Course> Courses = new();
     private List<Subject> Subjects = new();
-    
-    private int? SelectedEducation;
-    private int? SelectedPathway;
-    private int? SelectedSpecialization;
-    private int? SelectedCourse;
-    private int? SelectedSubject;
+    private List<Milestone> Milestones = new();
+
+    private string SelectedEducation = "";
+    private string SelectedPathway = "";
+    private string SelectedSpecialization = "";
+    private string SelectedCourse = "";
+    private string SelectedSubject = "";
 
     protected override void OnInitialized()
     {
         EducationList = EducationService.GetEducationList();
     }
 
-    private void OnEducationChange(ChangeEventArgs e)
+    private void OnEducationChange(string value)
     {
-        SelectedEducation = int.TryParse(e.Value?.ToString(), out var id) ? id : (int?)null;
-        Pathways = EducationList.FirstOrDefault(e => e.Id == SelectedEducation)?.Pathways ?? new();
+        SelectedEducation = value;
+        var selected = EducationList.FirstOrDefault(e => e.Name == SelectedEducation);
+        Pathways = selected?.Pathways ?? new();
         Specializations = new();
         Courses = new();
         Subjects = new();
+        Milestones = new();
     }
 
-    private void OnPathwayChange(ChangeEventArgs e)
+    private void OnPathwayChange(string value)
     {
-        SelectedPathway = int.TryParse(e.Value?.ToString(), out var id) ? id : (int?)null;
-        Specializations = Pathways.FirstOrDefault(p => p.Id == SelectedPathway)?.Specializations ?? new();
+        SelectedPathway = value;
+        var selected = Pathways.FirstOrDefault(p => p.Name == SelectedPathway);
+        Specializations = selected?.Specializations ?? new();
         Courses = new();
         Subjects = new();
+        Milestones = new();
     }
 
-    private void OnSpecializationChange(ChangeEventArgs e)
+    private void OnSpecializationChange(string value)
     {
-        SelectedSpecialization = int.TryParse(e.Value?.ToString(), out var id) ? id : (int?)null;
-        Courses = Specializations.FirstOrDefault(s => s.Id == SelectedSpecialization)?.Courses ?? new();
+        SelectedSpecialization = value;
+        var selected = Specializations.FirstOrDefault(s => s.Name == SelectedSpecialization);
+        Courses = selected?.Courses ?? new();
         Subjects = new();
+        Milestones = new();
     }
 
-    private void OnCourseChange(ChangeEventArgs e)
+    private void OnCourseChange(string value)
     {
-        SelectedCourse = int.TryParse(e.Value?.ToString(), out var id) ? id : (int?)null;
-        Subjects = Courses.FirstOrDefault(c => c.Id == SelectedCourse)?.Subjects ?? new();
+        SelectedCourse = value;
+        var selected = Courses.FirstOrDefault(c => c.Name == SelectedCourse);
+        Subjects = selected?.Subjects ?? new();
+        Milestones = new();
+    }
+
+    private void OnSubjectChange(string value)
+    {
+        SelectedSubject = value;
+        var selected = Subjects.FirstOrDefault(s => s.Name == SelectedSubject);
+        Milestones = selected?.Milestones ?? new();
+    }
+
+    private void AddNewItem(string className)
+    {
+        NavigationManager.NavigateTo($"/form/{className}?education={SelectedEducation}&pathway={SelectedPathway}&specialization={SelectedSpecialization}&course={SelectedCourse}&subject={SelectedSubject}");
     }
 }

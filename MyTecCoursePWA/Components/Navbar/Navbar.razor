@@ -61,6 +61,11 @@
 					<div @onclick="() => HandleButtonClick(userDashboard_Jv2)">
 						Dashboard 2
 					</div>
+				</div>				
+				<div class="hover-underline-single cursor-pointer text-sm font-bold text-[var(--text-color-secondary)] uppercase transition hover:text-[var(--primary-color)] focus:text-[var(--primary-color)] active:text-[var(--primary-color)] md:text-xl lg:text-2xl xl:text-sm">
+					<div @onclick="() => HandleButtonClick(test)">
+						 Test Page
+					</div>
 				</div>
 			</div>
 		</div>
@@ -78,6 +83,7 @@
 	private string userDashboard = "/UserDashboard";
 	private string userDashboard_Jv2 = "/UserDashboard_Jv2";
 	private string home = "/";
+	private string test = "/mytestpage";
 
 	private async void HandleButtonClick(string link)
 	{
