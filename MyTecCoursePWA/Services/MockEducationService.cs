@@ -1,6 +1,4 @@
 ﻿using MyTecCoursePWA.Models;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace MyTecCoursePWA.Services
 {
@@ -195,5 +193,15 @@ namespace MyTecCoursePWA.Services
         {
             return _educationList.FirstOrDefault(e => e.Name == name);
         }
+
+        public List<Pathway> GetPathwayList()
+        {
+            return _educationList
+                .SelectMany(e => e.Pathways)
+                .Distinct()
+                .ToList();
+        }
+
+
     }
 }

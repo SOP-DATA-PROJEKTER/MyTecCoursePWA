@@ -1,0 +1,63 @@
+﻿@using MyTecCoursePWA.Pages.AdminPages
+@using MyTecCoursePWA.Models
+
+@page "/AdminDashboard"
+
+@inject NavigationManager Navigation
+
+<div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="flex w-64 flex-col bg-gray-800 text-white">
+        <h2 class="p-4 text-xl font-bold">⚙ Admin Panel</h2>
+        <nav class="flex flex-col space-y-2 p-4">
+            <button class="w-full rounded p-2 text-left hover:bg-gray-700" @onclick="@(() => LoadPage("Education"))" >📚 Uddannelser</button>
+            <button class="w-full rounded p-2 text-left hover:bg-gray-700" @onclick="@(() => LoadPage("Pathway"))">📘 Retninger</button>
+            <button class="w-full rounded p-2 text-left hover:bg-gray-700" @onclick="@(() => LoadPage("Specialization"))">🎓 Specialiseringer</button>
+            <button class="w-full rounded p-2 text-left hover:bg-gray-700" @onclick="@(() => LoadPage("Course"))">📖 Forløb</button>
+            <button class="w-full rounded p-2 text-left hover:bg-gray-700" @onclick="@(() => LoadPage("Subject"))">📑 Fag</button>            
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="flex flex-1 flex-col p-6">
+        <!-- Topbar -->
+        <div class="mb-4 text-lg font-bold">Administrer Data</div>
+
+        <!-- Dynamisk Content Loader -->
+        @if (SelectedPage == "Education")
+        {
+            <AdminEducation />
+        }
+        else if (SelectedPage == "Pathway")
+        {
+            <AdminPathway />
+        }
+        else if (SelectedPage == "Specialization")
+        {
+            <AdminSpecialization />
+        }
+        else if (SelectedPage == "Course")
+        {
+            <AdminCourses />
+        }
+        else if (SelectedPage == "Subject")
+        {
+            <AdminSubjects />
+        }      
+        else
+        {
+            <div class="p-6">
+                <h2 class="mb-4 text-xl font-bold">📋 Vælg hvad du vil administrere</h2>                
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private string SelectedPage = "";
+
+    private void LoadPage(string page)
+    {
+        SelectedPage = page;
+    }
+}
