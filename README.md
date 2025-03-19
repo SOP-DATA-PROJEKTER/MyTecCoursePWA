@@ -72,17 +72,17 @@ Husk desuden at lade tailwind-powershell stå åben mens der udvikles.
 <hr>
 
 ## Her er de kravspecifikationer vi fik stillet med programmet: - Fra gammelt hold
-~~ Man starter med at kunne se EUD og EUX i form af knapper
-Mulighed for at oprettelse af profil
-~~ Derefter kan man se de forskellige uddannelser
+(~~) Man starter med at kunne se EUD og EUX i form af knapper
+Mulighed for at oprettelse af profil (~~)
+(~~) Derefter kan man se de forskellige uddannelser(~~)
 
 Husk GF2 (hvis man er elev giver det så mening den kommer før eller efter pkt. 4?)
 
-~~ Derefter ses de forskellige uddannelseslinjer under uddannelsen, som var valgt før
+(~~) Derefter ses de forskellige uddannelseslinjer under uddannelsen, som var valgt før (~~)
 
-~~ Derefter bliver man rykket til en ny side hvor man kan se de alle hoved forløbene for uddannelsen.
+(~~) Derefter bliver man rykket til en ny side hvor man kan se de alle hoved forløbene for uddannelsen. (~~)
 
-~~ Derefter kan man se alle de fag, som man skal igennem hele hoved forløbet
+(~~) Derefter kan man se alle de fag, som man skal igennem hele hoved forløbet (~~)
 
 Information om faget
 
@@ -103,7 +103,7 @@ Domain
 
 Server til host web-app and back-end
 
-~~ Evt. Designes med TEC nye farve lilla (se hjemmeside)
+(~~) Evt. Designes med TEC nye farve lilla (se hjemmeside) (~~)
 
 En administrator skal kunne administrere indholdet af de valg og fag, som eleven møder når denne klikker
 
