@@ -109,3 +109,16 @@ En administrator skal kunne administrere indholdet af de valg og fag, som eleven
 
 
 ## Ny Kravspecifikation
+
+
+## ITCN Krav
+
+Hosting af Blazor Web Assembly Progressive Web Application
+
+Https hosting - udsted certifikater til brugeren
+
+Hosting af Web API - Asp.net Core web api.
+
+Hosting af Database - WebApi er koblet op på denne.
+
+--Oprettelse af brugere? kun @elev.tec.dk og @tec.dk - @tec.dk får admin roller.
