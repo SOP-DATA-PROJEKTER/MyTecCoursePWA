@@ -67,3 +67,45 @@ til udvikling af tailwind - download [tailwind cli](https://github.com/tailwindl
 .\tailwindcss-windows-x64.exe -i .\wwwroot\css\app.css -o .\wwwroot\css\app.min.css --watch
 ```
 Husk desuden at lade tailwind-powershell stå åben mens der udvikles.
+
+
+<hr>
+
+## Her er de kravspecifikationer vi fik stillet med programmet: - Fra gammelt hold
+~~ Man starter med at kunne se EUD og EUX i form af knapper
+Mulighed for at oprettelse af profil
+~~ Derefter kan man se de forskellige uddannelser
+
+Husk GF2 (hvis man er elev giver det så mening den kommer før eller efter pkt. 4?)
+
+~~ Derefter ses de forskellige uddannelseslinjer under uddannelsen, som var valgt før
+
+~~ Derefter bliver man rykket til en ny side hvor man kan se de alle hoved forløbene for uddannelsen.
+
+~~ Derefter kan man se alle de fag, som man skal igennem hele hoved forløbet
+
+Information om faget
+
+Derefter kan man se et stort input felt, som skal udfyldes med elevernes datalog for hvad de har lavet i deres lærlingeforløb.
+
+To uger før elev skal tilbage i skole, sendes en reminder-mail til elev og lærlingeansvarlig omkring udfyldelse.
+
+Kan det udfyldte inputfelt uploades til en ”afleveringsmappe” i itslearning (hvis der vel at mærke er oprettet en af underviser, eller nemt vedhæftes en mail? – bare med en knap med et mail/upload ikon??
+
+Input feltet skal beskrives med og deles i to ”afsnit”;
+”Udfyld gerne med din lærlingeansvarlige”.
+
+Du skal udfylde med 4-5 ting du har arbejdet med undervejs i din læretid.
+Beskrive gerne en opgave som gav dig udfordringer, enten som du løste eller gerne vil have input til at løse på dit kommende skoleforløb
+Database? Cloud? (pas, det er jo en hjemmeside man besøger, så det som passer til det!)
+
+Domain
+
+Server til host web-app and back-end
+
+~~ Evt. Designes med TEC nye farve lilla (se hjemmeside)
+
+En administrator skal kunne administrere indholdet af de valg og fag, som eleven møder når denne klikker
+
+
+## Ny Kravspecifikation
