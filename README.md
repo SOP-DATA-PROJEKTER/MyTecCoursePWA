@@ -121,6 +121,8 @@ Hosting af Web API - Asp.net Core web api.
 
 Hosting af Database - WebApi er koblet op på denne.
 
+Domæne - Kan i stå for det eller skal vi ud og finde og købe et, som ITCN kan bruge?
+
 --Oprettelse af brugere? kun @elev.tec.dk og @tec.dk - @tec.dk får admin roller.
 
 Er det ITCN der skal stå for oprettelse af elever og admins? eller er det TEC administration? eller er det eleverne selv?
