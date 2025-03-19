@@ -119,7 +119,7 @@ Https hosting - udsted certifikater til brugeren
 
 Hosting af Web API - Asp.net Core web api.
 
-Hosting af Database - WebApi er koblet op på denne.
+Hosting af Database - WebApi er koblet op på denne. ms sql server. vi skal bruge connectionstring inden overlevering af applikationer.
 
 Domæne - Kan i stå for det eller skal vi ud og finde og købe et, som ITCN kan bruge?
 
