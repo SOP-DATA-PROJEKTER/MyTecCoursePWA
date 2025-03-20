@@ -1,5 +1,6 @@
 ﻿@using MyTecCoursePWA.Components.Navbar
 @using MyTecCoursePWA.Components.Footer
+@using MyTecCoursePWA.Layout
 
 @inherits LayoutComponentBase
 @inject IJSRuntime JSRuntime
@@ -11,7 +12,7 @@
 			<Navbar />
 		</div>
 		<main class="style= flex-grow bg-[var(--background)]">
-			<article class="fade-container mx-1 my-8 overflow-hidden px-4 md:mx-6 @fadeClass">
+			<article class="fade-container overflow-hidden @fadeClass">
 				@Body
 			</article>
 		</main>
@@ -23,8 +24,6 @@
 
 @code {
 	private string fadeClass = "";
-
-
 
 	public async Task HandleMessageFromPage(string link)
 	{
@@ -44,7 +43,7 @@
 		fadeClass = "";
 		StateHasChanged();
 
-		InvokeAsync(() => StateHasChanged());
+		await InvokeAsync(() => StateHasChanged());
 
 	}
 }
