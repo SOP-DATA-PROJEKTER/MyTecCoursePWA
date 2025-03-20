@@ -1,0 +1,110 @@
+﻿@using MyTecCoursePWA.Pages.AdminPages
+@using MyTecCoursePWA.Models
+
+@page "/AdminDashboard"
+
+@inject NavigationManager Navigation
+
+<div class="border-8 flex h-screen border-gray-800">
+    <!-- Sidebar -->
+    <div class="flex w-64 flex-col bg-gray-800 text-white">
+        <h2 class="p-4 text-xl font-bold">⚙ Admin Panel</h2>
+        <nav class="flex flex-col space-y-4 p-4">
+            <!-- Dashboard -->
+            <div>
+                <h3 class="mb-2 text-sm font-semibold text-gray-400 uppercase">Oversigt</h3>
+                <button class="flex w-full items-center space-x-2 rounded p-2 text-left hover:bg-gray-700"
+                        @onclick="@(() => ReloadAdminDashboard())">
+                    <span>🏠</span> <span>Oversigt</span>
+                </button>
+            </div>
+
+            <!-- Uddannelse -->
+            <div>
+                <h3 class="mb-2 text-sm font-semibold text-gray-400 uppercase">Uddannelsesstruktur</h3>
+                <button class="flex w-full items-center space-x-2 rounded p-2 text-left hover:bg-gray-700"
+                        @onclick="@(() => LoadPage("Education"))">
+                    <span>📚</span> <span>Uddannelser</span>
+                </button>
+                <button class="flex w-full items-center space-x-2 rounded p-2 text-left hover:bg-gray-700"
+                        @onclick="@(() => LoadPage("Pathway"))">
+                    <span>📘</span> <span>Retninger</span>
+                </button>
+                <button class="flex w-full items-center space-x-2 rounded p-2 text-left hover:bg-gray-700"
+                        @onclick="@(() => LoadPage("Specialization"))">
+                    <span>🎓</span> <span>Specialiseringer</span>
+                </button>
+                <button class="flex w-full items-center space-x-2 rounded p-2 text-left hover:bg-gray-700"
+                        @onclick="@(() => LoadPage("Course"))">
+                    <span>📖</span> <span>Forløb</span>
+                </button>
+                <button class="flex w-full items-center space-x-2 rounded p-2 text-left hover:bg-gray-700"
+                        @onclick="@(() => LoadPage("Subject"))">
+                    <span>📑</span> <span>Fag</span>
+                </button>
+            </div>
+
+            <!-- Administration -->
+            <div>
+                <h3 class="mb-2 text-sm font-semibold text-gray-400 uppercase">Administration</h3>
+                <button class="flex w-full items-center space-x-2 rounded p-2 text-left hover:bg-gray-700"
+                        @onclick="@(() => LoadPage("Users"))">
+                    <span>👤</span> <span>Brugere</span>
+                </button>
+            </div>
+        </nav>
+
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="flex flex-1 flex-col p-6">
+        <!-- Topbar -->
+        <div class="mb-4 text-lg font-bold">Administrer Data</div>
+
+        <!-- Dynamisk Content Loader -->
+        @if (SelectedPage == "Education")
+        {
+            <AdminEducation />
+        }
+        else if (SelectedPage == "Pathway")
+        {
+            <AdminPathway />
+        }
+        else if (SelectedPage == "Specialization")
+        {
+            <AdminSpecialization />
+        }
+        else if (SelectedPage == "Course")
+        {
+            <AdminCourses />
+        }
+        else if (SelectedPage == "Subject")
+        {
+            <AdminSubjects />
+        }
+        else if (SelectedPage == "Users")
+        {
+            <AdminUserManagement />
+        }
+        else
+        {
+            <div class="p-6">
+                <h2 class="mb-4 text-xl font-bold">📋 Vælg hvad du vil administrere</h2>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private string SelectedPage = "";
+
+    private void LoadPage(string page)
+    {
+        SelectedPage = page;
+    }
+
+    private void ReloadAdminDashboard()
+    {
+        Navigation.NavigateTo("/AdminDashboard", forceLoad: true);
+    }
+}

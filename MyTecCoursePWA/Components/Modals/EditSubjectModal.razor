@@ -1,0 +1,72 @@
+﻿@using MyTecCoursePWA.Models;
+@using MyTecCoursePWA.Components.Buttons;
+@using MyTecCoursePWA.Components.List;
+
+
+@code {
+    [Parameter] public Subject EditingSubject { get; set; } = new Subject { Name = "", Description = "", Milestones = new List<Milestone>() };
+    [Parameter] public EventCallback<object> OnClose { get; set; }
+    [Parameter] public EventCallback<Subject> OnSave { get; set; }
+
+    private void SaveChanges()
+    {
+        OnSave.InvokeAsync(EditingSubject);
+    }
+}
+
+<div class="fixed inset-0 flex items-center justify-center bg-[var(--modal-bg)] backdrop-blur-sm">
+    <div class="w-1/2 rounded-lg bg-white p-6 shadow-lg">
+        <h3 class="text-xl font-semibold">✏️ Rediger Fag</h3>
+
+        <!-- Subject Name -->
+        <label class="mt-4 block text-sm font-semibold">Fagnavn:</label>
+        <input type="text" class="w-full rounded border p-2" @bind="EditingSubject.Name" />
+
+        <!-- Description -->
+        <label class="mt-4 block text-sm font-semibold">Beskrivelse:</label>
+        <textarea class="w-full rounded border p-2" rows="4" @bind="EditingSubject.Description"></textarea>
+
+        <!-- Milestones -->
+        <h4 class="mt-4 text-lg font-semibold">🏆 Milepæle</h4>
+        @for (int i = 0; i < EditingSubject.Milestones.Count; i++)
+        {
+            <div class="mt-2 flex items-center space-x-2">
+                <input type="text" class="w-full rounded border p-2"
+                       @bind="EditingSubject.Milestones[i].Description" />
+                <button class="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-700"
+                        @onclick="() => RemoveMilestone(i)">
+                    🗑
+                </button>
+            </div>
+        }
+
+        <button class="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-700"
+                @onclick="AddMilestone">
+            ➕ Tilføj Milepæl
+        </button>
+
+        <!-- Actions -->
+        <div class="mt-6 flex justify-end space-x-2">
+            <button class="rounded bg-gray-400 px-4 py-2 text-white hover:bg-gray-600"
+                    @onclick="() => OnClose.InvokeAsync(null)">
+                ❌ Luk
+            </button>
+            <button class="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-700"
+                    @onclick="SaveChanges">
+                💾 Gem
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void AddMilestone()
+    {
+        EditingSubject.Milestones.Add(new Milestone { Id = new Random().Next(1000, 9999), Description = "" });
+    }
+
+    private void RemoveMilestone(int index)
+    {
+        EditingSubject.Milestones.RemoveAt(index);
+    }
+}

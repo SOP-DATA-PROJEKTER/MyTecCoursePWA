@@ -7,7 +7,7 @@
     --primary-color: #9d5cff;
     --primary-color-shade: #8b35ff; /* TEC lilla */
     --text-color: #282828;
-    --text-color-secondary: #FFF;
+    --text-color-secondary: white;
     --border-color: rgba(0,0,0,0.2);
 }
 
