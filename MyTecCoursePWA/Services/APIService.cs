@@ -57,5 +57,21 @@ namespace MyTecCoursePWA.Services
         }
 
 
+        public async Task<bool> DeleteAsync<T>(string endpoint, int id )
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"{_baseEndpoint}/{endpoint}/{id}");
+                return response.IsSuccessStatusCode;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting data from {endpoint}: {ex.Message}");
+                return default;
+                
+            }
+        }
+
+
     }
 }

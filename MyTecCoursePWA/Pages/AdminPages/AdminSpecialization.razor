@@ -57,7 +57,7 @@
 			Items="SelectedPathway.Specializations"
 			GetItemName="s => s.Name"
 			OnEdit="EditSpecialization"
-			OnDelete="DeleteSpecialization" />
+			OnDelete="DeleteSpecializationAsync" />
 		}
 		else
 		{
@@ -104,19 +104,9 @@
 		EducationList = await APIService.GetAllAsync<Education>(endpoint);
 	}
 
-	private void AddSpecialization()
-	{
-		if (SelectedPathway != null && !string.IsNullOrWhiteSpace(NewSpecializationName))
-		{
-			var newSpec = new Specialization { Id = new Random().Next(1000, 9999), Name = NewSpecializationName };
-			SelectedPathway.Specializations = SelectedPathway.Specializations.Append(newSpec).ToList();
-			NewSpecializationName = "";
-			StateHasChanged();
-		}
-	}
-
 	private async Task AddSpecializationAsync()
 	{
+		string endpoint = "Specialization";
 		if (SelectedPathway != null && !string.IsNullOrWhiteSpace(NewSpecializationName))
 		{
 			var newSpec = new Specialization 
@@ -125,11 +115,11 @@
 				PathwayId = SelectedPathway.Id
 
 			};
-			SelectedPathway.Specializations = SelectedPathway.Specializations.Append(await APIService.PostAsync("Specialization", newSpec)).ToList();
+			SelectedPathway.Specializations = SelectedPathway.Specializations.Append(await APIService.PostAsync(endpoint, newSpec)).ToList();
 			NewSpecializationName = "";
 			StateHasChanged();
 
-			
+
 		}
 	}
 
@@ -138,11 +128,13 @@
 		// Logic to edit specialization
 	}
 
-	private void DeleteSpecialization(Specialization spec)
+	private async Task DeleteSpecializationAsync(Specialization spec)
 	{
+		string endpoint = "Specialization"; 
 		if (SelectedPathway != null)
 		{
-			SelectedPathway.Specializations = SelectedPathway.Specializations.Where(s => s.Id != spec.Id).ToList();
+			await APIService.DeleteAsync<Specialization>(endpoint, spec.Id);
+			SelectedPathway.Specializations.Remove(spec);
 			StateHasChanged();
 		}
 	}

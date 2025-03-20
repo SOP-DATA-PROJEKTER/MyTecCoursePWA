@@ -46,7 +46,7 @@
             Items="SelectedEducation.Pathways"
             GetItemName="p => p.Name"
             OnEdit="EditPathway"
-            OnDelete="DeletePathway" />
+            OnDelete="DeletePathwayAsync" />
         }
         else
         {
@@ -59,7 +59,6 @@
 
 @code {
     private List<Education> EducationList = new();
-    private const string endpoint = "Education";
 
     private int SelectedEducationId
     {
@@ -78,29 +77,13 @@
 
     protected override async Task OnInitializedAsync()
     {
+        string endpoint = "Education";
         EducationList = await APIService.GetAllAsync<Education>(endpoint);
-    }
-
-    // old AddCourse method
-    private void AddPathway()
-    {
-        if (SelectedEducation != null && !string.IsNullOrWhiteSpace(NewPathwayName))
-        {
-            var newPathway = new Pathway
-                {
-                    Id = new Random().Next(1000, 9999),
-                    Name = NewPathwayName
-                };
-            SelectedEducation.Pathways = SelectedEducation.Pathways.Append(newPathway).ToList();
-
-            // Clear input field after adding
-            NewPathwayName = "";
-            StateHasChanged();
-        }
     }
 
     private async Task AddPathwayAsync()
     {
+        string endpoint = "Pathway";
         if (SelectedEducation != null && !string.IsNullOrWhiteSpace(NewPathwayName))
         {
             var newPathway = new Pathway
@@ -115,7 +98,7 @@
             NewPathwayName = "";
             StateHasChanged();
 
-			
+
 
         }
     }
@@ -125,12 +108,16 @@
         // TODO: Implement edit functionality (e.g., open modal or inline edit)
     }
 
-    private void DeletePathway(Pathway path)
+    private async Task DeletePathwayAsync(Pathway path)
     {
-        if (SelectedEducation != null)
+		string endpoint = "Pathway";
+        if(SelectedEducation != null)
         {
-            SelectedEducation.Pathways = SelectedEducation.Pathways.Where(p => p.Id != path.Id).ToList();
-            StateHasChanged();
+			if (await APIService.DeleteAsync<Pathway>(endpoint, path.Id))
+			{
+				SelectedEducation.Pathways.Remove(path);
+				StateHasChanged();
+            }
         }
     }
 }

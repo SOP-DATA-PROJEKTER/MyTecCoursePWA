@@ -50,13 +50,13 @@
     {
         <div class="mt-4 flex items-center space-x-2">
             <input type="text" class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
-                   placeholder="Indtast forløbets navn..."
-                   @bind="NewCourseName"
-                   @bind:event="oninput" />
+            placeholder="Indtast forløbets navn..."
+            @bind="NewCourseName"
+            @bind:event="oninput" />
 
             <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
-                               OnClick="AddCourseAsync"
-                               IsDisabled="@(string.IsNullOrWhiteSpace(NewCourseName))" />
+            OnClick="AddCourseAsync"
+            IsDisabled="@(string.IsNullOrWhiteSpace(NewCourseName))" />
         </div>
     }
 
@@ -67,10 +67,10 @@
         @if (SelectedSpecialization != null && SelectedSpecialization.Courses.Any())
         {
             <AdminList TItem="Course"
-                       Items="SelectedSpecialization.Courses"
-                       GetItemName="c => c.Name"
-                       OnEdit="EditCourse"
-                       OnDelete="DeleteCourse" />
+            Items="SelectedSpecialization.Courses"
+            GetItemName="c => c.Name"
+            OnEdit="EditCourse"
+            OnDelete="DeleteCourseAsync" />
         }
         else
         {
@@ -131,19 +131,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        EducationList = await APIService.GetAllAsync<Education>("Education");
-    }
-
-	// old AddCourse method
-    private void AddCourse()
-    {
-        if (SelectedSpecialization != null && !string.IsNullOrWhiteSpace(NewCourseName))
-        {
-            var newCourse = new Course { Id = new Random().Next(1000, 9999), Name = NewCourseName };
-            SelectedSpecialization.Courses = SelectedSpecialization.Courses.Append(newCourse).ToList();
-            NewCourseName = "";
-            StateHasChanged();
-        }
+        string endpoint = "Education";
+        EducationList = await APIService.GetAllAsync<Education>(endpoint);
     }
 
     private async Task AddCourseAsync()
@@ -151,13 +140,13 @@
         if (SelectedSpecialization != null && !string.IsNullOrWhiteSpace(NewCourseName))
         {
             var newCourse = new Course { Name = NewCourseName, SpecializationId = SelectedSpecialization.Id};
-			NewCourseName = ""; // resets the course name input
+            NewCourseName = ""; // resets the course name input
 
             SelectedSpecialization.Courses = SelectedSpecialization.Courses
                 .Append(await APIService.PostAsync<Course>("Course", newCourse))
                 .ToList(); // sends the new course to the API & adds the return value to the list
 
-			StateHasChanged(); // updated the UI
+            StateHasChanged(); // updated the UI
         }
     }
 
@@ -166,12 +155,17 @@
         // Logic to edit course
     }
 
-    private void DeleteCourse(Course course)
+
+    private async Task DeleteCourseAsync(Course course)
     {
+        string endpoint = "Course";
         if (SelectedSpecialization != null)
         {
-            SelectedSpecialization.Courses = SelectedSpecialization.Courses.Where(c => c.Id != course.Id).ToList();
-            StateHasChanged();
+            if (await APIService.DeleteAsync<Course>(endpoint, course.Id))
+            {
+                SelectedSpecialization.Courses.Remove(course);
+                StateHasChanged();
+            }
         }
     }
 }
