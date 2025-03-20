@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using MyTecCoursePWA.Services
 @using MyTecCoursePWA.Components.Buttons
+@using MyTecCoursePWA.Components.Skeletons
 @using MyTecCoursePWA.Layout
 @using MyTecCoursePWA.Models
 @inject APIService APIService
@@ -12,9 +13,7 @@
         </h1>
         @if (isLoading)
         {
-            <div class="flex h-32 items-center justify-center">
-                <span class="border-4 border-t-transparent h-12 w-12 animate-spin rounded-full border-purple-500"></span>
-            </div>
+			<SkeletonBox amount="2" />
         }
         else
         {
@@ -44,6 +43,7 @@
         }
         finally
         {
+            await Task.Delay(2000);
             isLoading = false;
             StateHasChanged();
         }
