@@ -1,4 +1,5 @@
 ﻿@using MyTecCoursePWA.Models
+@using MyTecCoursePWA.Components.Modals
 @using MyTecCoursePWA.Components.Buttons
 @using MyTecCoursePWA.Components.List
 @page "/AdminUserManagement"
@@ -10,10 +11,13 @@
 
     <!-- Søg og Tilføj -->
     <div class="mt-4 flex items-center space-x-2">
-        <input type="text" class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-blue-300"
-               placeholder="Søg efter bruger..." @bind="SearchQuery" @bind:event="oninput" />
+        <input type="text" 
+               class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-blue-300"
+               placeholder="Søg efter bruger..."
+               @bind="SearchQuery"
+               @bind:event="oninput" />
 
-        <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj Bruger"
+        <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
                            OnClick="OpenAddUserModal" />
     </div>
 

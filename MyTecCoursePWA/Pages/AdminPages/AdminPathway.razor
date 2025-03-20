@@ -2,6 +2,7 @@
 @using MyTecCoursePWA.Components.Buttons;
 @using MyTecCoursePWA.Components.List;
 @inject MockEducationService EducationService
+@inject APIService APIService
 
 <div class="p-6">
     <h2 class="text-xl font-bold">📘 Administrer Retninger</h2>
@@ -23,15 +24,15 @@
         <div class="mt-4 flex items-center space-x-2">
             <!-- Input Field for Pathway Name -->
             <input type="text"
-                   class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
-                   placeholder="Indtast retningens navn..."
-                   @bind="NewPathwayName"
-                   @bind:event="oninput" />
+            class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
+            placeholder="Indtast retningens navn..."
+            @bind="NewPathwayName"
+            @bind:event="oninput" />
 
             <!-- Add Button (Disabled if Input is Empty) -->
             <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
-                               OnClick="AddPathway"
-                               IsDisabled="@(string.IsNullOrWhiteSpace(NewPathwayName))" />
+            OnClick="AddPathwayAsync"
+            IsDisabled="@(string.IsNullOrWhiteSpace(NewPathwayName))" />
         </div>
     }
 
@@ -42,10 +43,10 @@
         @if (SelectedEducation != null && SelectedEducation.Pathways.Any())
         {
             <AdminList TItem="Pathway"
-                       Items="SelectedEducation.Pathways"
-                       GetItemName="p => p.Name"
-                       OnEdit="EditPathway"
-                       OnDelete="DeletePathway" />
+            Items="SelectedEducation.Pathways"
+            GetItemName="p => p.Name"
+            OnEdit="EditPathway"
+            OnDelete="DeletePathway" />
         }
         else
         {
@@ -58,6 +59,8 @@
 
 @code {
     private List<Education> EducationList = new();
+    private const string endpoint = "Education";
+
     private int SelectedEducationId
     {
         get => _selectedEducationId;
@@ -73,11 +76,12 @@
     private Education? SelectedEducation;
     private string NewPathwayName = ""; // Stores the input for a new pathway
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        EducationList = EducationService.GetEducationList();
+        EducationList = await APIService.GetAllAsync<Education>(endpoint);
     }
 
+    // old AddCourse method
     private void AddPathway()
     {
         if (SelectedEducation != null && !string.IsNullOrWhiteSpace(NewPathwayName))
@@ -92,6 +96,27 @@
             // Clear input field after adding
             NewPathwayName = "";
             StateHasChanged();
+        }
+    }
+
+    private async Task AddPathwayAsync()
+    {
+        if (SelectedEducation != null && !string.IsNullOrWhiteSpace(NewPathwayName))
+        {
+            var newPathway = new Pathway
+                {
+                    Name = NewPathwayName,
+					EducationId = SelectedEducation.Id
+
+                };
+            SelectedEducation.Pathways = SelectedEducation.Pathways.Append(await APIService.PostAsync(endpoint, newPathway)).ToList();
+
+            // Clear input field after adding
+            NewPathwayName = "";
+            StateHasChanged();
+
+			
+
         }
     }
 

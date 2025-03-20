@@ -5,6 +5,7 @@
 
 @page "/AdminSubjects"
 @inject MockEducationService EducationService
+@inject APIService APIService
 
 <div class="p-6">
     <h2 class="text-xl font-bold">📑 Administrer Fag</h2>
@@ -64,13 +65,13 @@
     {
         <div class="mt-4 flex items-center space-x-2">
             <input type="text" class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
-                   placeholder="Indtast fagets navn..."
-                   @bind="NewSubjectName"
-                   @bind:event="oninput" />
+            placeholder="Indtast fagets navn..."
+            @bind="NewSubjectName"
+            @bind:event="oninput" />
 
             <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
-                               OnClick="AddSubject"
-                               IsDisabled="@(string.IsNullOrWhiteSpace(NewSubjectName))" />
+            OnClick="AddSubject"
+            IsDisabled="@(string.IsNullOrWhiteSpace(NewSubjectName))" />
         </div>
     }
 
@@ -81,10 +82,10 @@
         @if (SelectedCourse != null && SelectedCourse.Subjects.Any())
         {
             <AdminList TItem="Subject"
-                       Items="SelectedCourse.Subjects"
-                       GetItemName="s => s.Name"
-                       OnEdit="EditSubject"
-                       OnDelete="DeleteSubject" />
+            Items="SelectedCourse.Subjects"
+            GetItemName="s => s.Name"
+            OnEdit="EditSubject"
+            OnDelete="DeleteSubject" />
         }
         else
         {
@@ -96,8 +97,8 @@
     @if (IsEditingSubject)
     {
         <EditSubjectModal EditingSubject="EditingSubject"
-                          OnClose="CloseEditModal"
-                          OnSave="SaveEditedSubject" />
+        OnClose="CloseEditModal"
+        OnSave="SaveEditedSubject" />
     }
 
 
@@ -175,9 +176,10 @@
     private bool IsEditingSubject = false;
     private Subject EditingSubject = new() { Name = string.Empty };
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        EducationList = EducationService.GetEducationList();
+        string endpoint = "Education";
+        EducationList = await APIService.GetAllAsync<Education>(endpoint);
     }
 
     private void AddSubject()
@@ -188,6 +190,22 @@
             SelectedCourse.Subjects = SelectedCourse.Subjects.Append(newSubject).ToList();
             NewSubjectName = "";
             StateHasChanged();
+        }
+    }
+
+    private async Task AddSubjectAsync()
+    {
+        if (SelectedCourse != null && !string.IsNullOrWhiteSpace(NewSubjectName))
+        {
+            var newSubject = new Subject
+            {
+                Name = NewSubjectName,
+				CourseId = SelectedCourse.Id
+            };
+            SelectedCourse.Subjects = SelectedCourse.Subjects.Append(await APIService.PostAsync<Subject>("Subject", newSubject)).ToList();
+            NewSubjectName = "";
+            StateHasChanged();
+
         }
     }
 

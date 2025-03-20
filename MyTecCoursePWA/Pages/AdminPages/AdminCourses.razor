@@ -134,6 +134,7 @@
         EducationList = await APIService.GetAllAsync<Education>("Education");
     }
 
+	// old AddCourse method
     private void AddCourse()
     {
         if (SelectedSpecialization != null && !string.IsNullOrWhiteSpace(NewCourseName))
@@ -150,11 +151,13 @@
         if (SelectedSpecialization != null && !string.IsNullOrWhiteSpace(NewCourseName))
         {
             var newCourse = new Course { Name = NewCourseName, SpecializationId = SelectedSpecialization.Id};
-
-            SelectedSpecialization.Courses = SelectedSpecialization.Courses.Append(newCourse).ToList(); // adds the created course to the list
 			NewCourseName = ""; // resets the course name input
+
+            SelectedSpecialization.Courses = SelectedSpecialization.Courses
+                .Append(await APIService.PostAsync<Course>("Course", newCourse))
+                .ToList(); // sends the new course to the API & adds the return value to the list
+
 			StateHasChanged(); // updated the UI
-			await APIService.PostAsync<Course>("Course", newCourse); // sends the new course to the API
         }
     }
 

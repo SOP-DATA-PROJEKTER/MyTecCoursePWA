@@ -42,7 +42,7 @@ namespace MyTecCoursePWA.Services
             }
         }
 
-        public async Task<T?> PostAsync<T>(string endpoint, T data)
+        public async Task<T> PostAsync<T>(string endpoint, T data)
         {
             try
             {
