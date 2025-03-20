@@ -29,7 +29,7 @@
     Items="EducationList"
     GetItemName="e => e.Name"
     OnEdit="EditEducation"
-    OnDelete="DeleteEducation" />
+    OnDelete="DeleteEducationAsync" />
 
 </div>
 
@@ -44,17 +44,6 @@
         EducationList = await APIService.GetAllAsync<Education>(endpoint);
     }
 
-    // old AddCourse method
-    private void AddEducation()
-    {
-        if (!string.IsNullOrWhiteSpace(NewEducationName))
-        {
-            var newEducation = new Education { Id = new Random().Next(1000, 9999), Name = NewEducationName };
-            EducationList.Add(newEducation);
-            NewEducationName = ""; // Clear input field after adding
-        }
-    }
-
     private async Task AddEducationAsync()
     {
         if (!string.IsNullOrWhiteSpace(NewEducationName))
@@ -62,7 +51,7 @@
             var newEducation = new Education { Name = NewEducationName};
             EducationList.Add(await APIService.PostAsync(endpoint, newEducation)); // this is a bad approach since the list is not updated from the API, so no id's are given
             NewEducationName = ""; // Clear input field after adding
-			
+
         }
     }
 
@@ -71,8 +60,15 @@
         // Open modal or inline editing logic
     }
 
-    private void DeleteEducation(Education edu)
+    private async Task DeleteEducationAsync(Education edu)
     {
-        EducationList.Remove(edu);
+        string endpoint = "Education";
+
+        if(await APIService.DeleteAsync<Education>(endpoint, edu.Id))
+        {
+            EducationList.Remove(edu);
+        }
+
     }
+
 }

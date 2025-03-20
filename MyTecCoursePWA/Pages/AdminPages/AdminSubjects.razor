@@ -70,7 +70,7 @@
             @bind:event="oninput" />
 
             <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
-            OnClick="AddSubject"
+            OnClick="AddSubjectAsync"
             IsDisabled="@(string.IsNullOrWhiteSpace(NewSubjectName))" />
         </div>
     }
@@ -85,7 +85,7 @@
             Items="SelectedCourse.Subjects"
             GetItemName="s => s.Name"
             OnEdit="EditSubject"
-            OnDelete="DeleteSubject" />
+            OnDelete="DeleteSubjectAsync" />
         }
         else
         {
@@ -122,7 +122,7 @@
             SelectedSpecializationId = 0;
             SelectedCourseId = 0;
             StateHasChanged();
-        }
+        } 
     }
     private int _selectedEducationId = 0;
     private Education? SelectedEducation;
@@ -182,19 +182,9 @@
         EducationList = await APIService.GetAllAsync<Education>(endpoint);
     }
 
-    private void AddSubject()
-    {
-        if (SelectedCourse != null && !string.IsNullOrWhiteSpace(NewSubjectName))
-        {
-            var newSubject = new Subject { Id = new Random().Next(1000, 9999), Name = NewSubjectName };
-            SelectedCourse.Subjects = SelectedCourse.Subjects.Append(newSubject).ToList();
-            NewSubjectName = "";
-            StateHasChanged();
-        }
-    }
-
     private async Task AddSubjectAsync()
     {
+		string endpoint = "Subject";
         if (SelectedCourse != null && !string.IsNullOrWhiteSpace(NewSubjectName))
         {
             var newSubject = new Subject
@@ -202,7 +192,7 @@
                 Name = NewSubjectName,
 				CourseId = SelectedCourse.Id
             };
-            SelectedCourse.Subjects = SelectedCourse.Subjects.Append(await APIService.PostAsync<Subject>("Subject", newSubject)).ToList();
+            SelectedCourse.Subjects = SelectedCourse.Subjects.Append(await APIService.PostAsync<Subject>(endpoint, newSubject)).ToList();
             NewSubjectName = "";
             StateHasChanged();
 
@@ -225,9 +215,6 @@
         StateHasChanged(); // 🔥 Force UI refresh
     }
 
-
-
-
     private void CloseEditModal()
     {
         IsEditingSubject = false;
@@ -246,12 +233,14 @@
         StateHasChanged();
     }
 
-    private void DeleteSubject(Subject subject)
+    private async Task DeleteSubjectAsync(Subject subject)
     {
+        string endpoint = "Subject";
         if (SelectedCourse != null)
         {
-            SelectedCourse.Subjects = SelectedCourse.Subjects.Where(s => s.Id != subject.Id).ToList();
+            await APIService.DeleteAsync<Subject>(endpoint, subject.Id);
+            SelectedCourse.Subjects.Remove(subject);
             StateHasChanged();
-        }
-    }
+		}
+	}
 }
