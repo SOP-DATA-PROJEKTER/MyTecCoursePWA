@@ -42,6 +42,20 @@ namespace MyTecCoursePWA.Services
             }
         }
 
+        public async Task<T?> PostAsync<T>(string endpoint, T data)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync($"{_baseEndpoint}/{endpoint}", data);
+                return await response.Content.ReadFromJsonAsync<T>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error posting data to {endpoint}: {ex.Message}");
+                return default;
+            }
+        }
+
 
     }
 }
