@@ -1,61 +1,64 @@
 ﻿@page "/UserDashboard_Jv2"
 @using MyTecCoursePWA.Models
+@using MyTecCoursePWA.Components.Selectors
 @inject MockEducationService EducationService
 
-<div class="wrapper flex flex-col space-y-6 bg-[var(--text-color)] px-4 py-6">
-    <div class="rounded-lg border border-[var(--text-color)] bg-white p-6 shadow-lg shadow-black">
+<div class="wrapper flex flex-col space-y-6 bg-[var(--background-color-secondary)] px-4 py-6">
+    <div class="rounded-lg p-6 shadow-lg shadow-black">
         <div class="mb-4 flex items-center space-x-3">
             <div class="h-12 w-12 overflow-hidden rounded-full">
                 <img src="./ProfilePicture_Default.jpg" alt="Profile Picture" class="h-full w-full object-cover" />
             </div>
-            <div class="flex-1">
-                <input type="text" name="name" value="@user.Name" class="w-full border p-2 text-black" placeholder="Enter your name" />
+            <div class="mx-4 flex-1 border-b-2">
+                <input type="text" name="name" value="@user.Name" class="w-full pl-4 text-black focus:border-black focus:outline-none focus:border-b-0 focus:border-2" placeholder="Enter your name" />
             </div>
         </div>
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <MyTecCoursePWA.Components.Selectors.StyledSelector TItem="Education"
-                                                                Items="educationList"
-                                                                SelectedValue="@selectedEducationName"
-                                                                SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Education))" />
+            <StyledSelector TItem="Education"
+            Items="educationList"
+            SelectedValue="@selectedEducationName"
+            SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Education))" />
 
-            <MyTecCoursePWA.Components.Selectors.StyledSelector TItem="Pathway"
-                                                                Items="selectedEducation?.Pathways ?? new List<Pathway>()"
-                                                                SelectedValue="@selectedPathwayName"
-                                                                SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Pathway))" />
+            <StyledSelector TItem="Pathway"
+            Items="selectedEducation?.Pathways ?? new List<Pathway>()"
+            SelectedValue="@selectedPathwayName"
+            SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Pathway))" />
 
-            <MyTecCoursePWA.Components.Selectors.StyledSelector TItem="Specialization"
-                                                                Items="selectedPathway?.Specializations ?? new List<Specialization>()"
-                                                                SelectedValue="@selectedSpecializationName"
-                                                                SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Specialization))" />
+            <StyledSelector TItem="Specialization"
+            Items="selectedPathway?.Specializations ?? new List<Specialization>()"
+            SelectedValue="@selectedSpecializationName"
+            SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Specialization))" />
 
-            <MyTecCoursePWA.Components.Selectors.StyledSelector TItem="Course"
-                                                                Items="selectedSpecialization?.Courses ?? new List<Course>()"
-                                                                SelectedValue="@selectedCourseName"
-                                                                SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Course))" />
+            <StyledSelector TItem="Course"
+            Items="selectedSpecialization?.Courses ?? new List<Course>()"
+            SelectedValue="@selectedCourseName"
+            SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Course))" />
 
         </div>
     </div>
 
-    @if (!string.IsNullOrEmpty(selectedCourseName) && subjectList.Any())
+    @for (int i = 0; i < subjectList.Count; i++)
     {
-        <div class="space-y-6">
-            @foreach (var subject in subjectList)
-            {
-                <div class="space-y-4 rounded-lg bg-white p-6 shadow-lg shadow-black">
-                    <h3 class="font-semibold text-black">@subject.Name</h3>
-                    <div class="space-y-4">
-                        @foreach (var milestone in subject.Milestones)
-                        {
-                            <div class="">
-                                <h4 class="text-md font-medium text-black">@milestone.Description</h4>
-                            </div>
-                        }
-                    </div>
+        var subject = subjectList[i];
+        var colorClass = GetColorClass((ColorSelection)(i % 2));
+        var textColorClass = GetTextColorClass((ColorSelection)(i % 2));
+
+        <div class="@($"space-y-4 rounded-lg p-6 shadow-lg shadow-black {colorClass}")">
+            <div class="p-4">
+                <h3 class="@($"{textColorClass} pb-4 font-semibold")">@subject.Name</h3>
+                <div class="space-y-4">
+                    @foreach (var milestone in subject.Milestones)
+                    {
+                        <div>
+                            <h4 class="@($"{textColorClass} text-md font-medium")">@milestone.Description</h4>
+                        </div>
+                    }
                 </div>
-            }
+            </div>
         </div>
     }
+
 </div>
 
 @code {
@@ -78,6 +81,35 @@
         Pathway,
         Specialization,
         Course
+    }
+
+    private enum ColorSelection
+    {
+        Color1,
+        Color2,
+        // Color3,
+        // Color4
+    }
+
+    private string GetColorClass(ColorSelection selection)
+    {
+        return selection switch
+        {
+            ColorSelection.Color1 => "bg-[var(--background-secondary)]",
+            ColorSelection.Color2 => "text-[var(--text-color-secondary)]",
+            // ColorSelection.Color3 => "bg-pink-100",
+            // ColorSelection.Color4 => "bg-rose-100 ",
+            _ => "bg-white"
+        };
+    }
+
+    private string GetTextColorClass(ColorSelection selection)
+    {
+        return selection switch
+        {
+            ColorSelection.Color1 => "text-[var(--text-color-secondary)]",
+            ColorSelection.Color2 => "text-[var(--background-secondary)]",
+        };
     }
 
     private void OnSelectionChanged(string value, SelectionType selectionType)

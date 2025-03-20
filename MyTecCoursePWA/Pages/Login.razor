@@ -2,7 +2,7 @@
 @using MyTecCoursePWA.Components
 
 <div class="mb-8 flex h-full w-full items-center justify-center">
-    <div class="w-full max-w-md rounded-xl border border-[var(--primary-color)] bg-white p-8 shadow-lg shadow-black">
+    <div class="w-full max-w-md rounded-xl border border-[var(--border-color)] bg-white p-8 shadow-lg shadow-black">
         <!-- Login Icon -->
         <div class="mb-6 flex justify-center">
             <img src="./ProfilePicture_Default.jpg" alt="Login Icon" class="h-16 w-16">
@@ -60,11 +60,6 @@
 
     [CascadingParameter] public MainLayout Layout { get; set; }
 
-    protected override void OnInitialized()
-    {
-        // Update the background color when the login page is loaded
-        Layout.BackgroundColor = "transparent";
-    }
 
     private void HandleLogin()
     {

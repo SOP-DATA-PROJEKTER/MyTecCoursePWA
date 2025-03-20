@@ -1,8 +1,9 @@
-﻿@page "/education/{educationId}"
+﻿@page "/{educationName}/{id}"
 @using MyTecCoursePWA.Models
 @using MyTecCoursePWA.Components.Buttons
 
 @inject MockEducationService EducationService
+@inject APIService ApiService
 
 <h2 class="mb-4 text-xl font-bold md:text-2xl lg:text-4xl xl:text-xl">Vælg en uddannelsesvej</h2>
 
@@ -26,10 +27,10 @@ else
 
                     if (showPathway)
                     {
-                        
+
                         <SelectionButton Label="@pathway.Name"
-                                         IsSelected="isPathwaySelected"
-                                         OnClick="() => TogglePathway(pathway.Id)" />
+                        IsSelected="isPathwaySelected"
+                        OnClick="() => TogglePathway(pathway.Id)" />
                     }
                 }
             </div>
@@ -51,8 +52,8 @@ else
                                 if (showSpecialization)
                                 {
                                     <SelectionButton Label="@specialization.Name"
-                                                     IsSelected="isSpecializationSelected"
-                                                     OnClick="() => ToggleSpecialization(specialization.Id)" />
+                                    IsSelected="isSpecializationSelected"
+                                    OnClick="() => ToggleSpecialization(specialization.Id)" />
                                 }
                             }
                         </div>
@@ -80,8 +81,8 @@ else
                                 if (showCourse)
                                 {
                                     <SelectionButton Label="@course.Name"
-                                                     IsSelected="isCourseSelected"
-                                                     OnClick="() => ToggleCourse(course.Id)" />
+                                    IsSelected="isCourseSelected"
+                                    OnClick="() => ToggleCourse(course.Id)" />
                                 }
                             }
                         </div>
@@ -100,7 +101,7 @@ else
                                             <div key="@subject.Id" class="mb-4 rounded-md bg-gray-300 p-4">
                                                 <!-- Subject button to expand details -->
                                                 <button class="flex w-full cursor-pointer items-center justify-between rounded-md bg-gray-300 p-2 text-left font-semibold text-gray-900 transition hover:bg-blue-500 hover:text-white"
-                                                    @onclick="() => ToggleSubject(subject.Id)">
+                                                @onclick="() => ToggleSubject(subject.Id)">
                                                     @subject.Name <span>@(ExpandedSubjects.Contains(subject.Id) ? "🔼" : "🔽")</span>
                                                 </button>
 
@@ -116,7 +117,6 @@ else
                                                         </ul>
                                                     </div>
                                                     <div class="mt-2 rounded-md bg-gray-200 p-2 text-gray-900">
-
                                                         <h4 class="mt-3 text-base font-semibold text-blue-500 md:text-lg lg:text-xl xl:text-base">✔️ Målpinde:</h4>
                                                         <ul class="list-disc pl-4">
                                                             @foreach (var milestone in subject.Milestones)
@@ -145,7 +145,9 @@ else
 
 @code {
     [Parameter]
-    public string educationId { get; set; }
+    public string educationName { get; set; }
+    [Parameter]
+    public string id { get; set; }
 
     private Education? Education;
     private Pathway? SelectedPathway;
@@ -154,9 +156,9 @@ else
     private HashSet<int> ExpandedSubjects = new HashSet<int>();
     private List<Education> FilteredEducationList = new List<Education>();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        Education = EducationService.GetEducationByName(educationId);
+        Education = await ApiService.GetByIdAsync<Education>("Education", id);
         FilteredEducationList = Education != null ? new List<Education> { Education } : new List<Education>();
     }
 

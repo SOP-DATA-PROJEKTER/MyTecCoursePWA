@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 MyTecCoursePWA/tailwindcss-windows-x64.exe
 MyTecCoursePWA/wwwroot/css/app.min.css
+MyTecCoursePWA/publishScript.ps1
