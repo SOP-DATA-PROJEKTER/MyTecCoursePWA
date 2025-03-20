@@ -27,13 +27,13 @@
 @code {
     [Parameter] public string Name { get; set; }
     [Parameter] public string? Description { get; set; }
-    [Parameter] public string Link { get; set; }
+    [Parameter] public int Link { get; set; }
 
     [Parameter] public EventCallback<string> OnButtonClicked { get; set; }
 
     private async Task HandleButtonClick()
     {
         Console.WriteLine("Onclick worked!");
-        await OnButtonClicked.InvokeAsync(Link);
+        await OnButtonClicked.InvokeAsync($"{Name}/{Link}");
     }
 }
