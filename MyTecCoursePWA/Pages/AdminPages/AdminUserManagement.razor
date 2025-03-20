@@ -1,0 +1,109 @@
+﻿@using MyTecCoursePWA.Models
+@using MyTecCoursePWA.Components.Buttons
+@using MyTecCoursePWA.Components.List
+@page "/AdminUserManagement"
+@inject MockUserService UserService
+
+<div class="p-6">
+    <h2 class="text-xl font-bold">👤 Administrer Brugere</h2>
+    <p class="text-gray-500">Her kan du søge, tilføje, redigere og slette brugere.</p>
+
+    <!-- Søg og Tilføj -->
+    <div class="mt-4 flex items-center space-x-2">
+        <input type="text" class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-blue-300"
+               placeholder="Søg efter bruger..." @bind="SearchQuery" @bind:event="oninput" />
+
+        <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj Bruger"
+                           OnClick="OpenAddUserModal" />
+    </div>
+
+    <!-- Bruger Liste -->
+    <div class="mt-6 rounded border p-4">
+        <h3 class="text-lg font-semibold">📜 Brugeroversigt</h3>
+
+        @if (FilteredUsers.Any())
+        {
+            <AdminList TItem="User"
+                       Items="FilteredUsers"
+                       GetItemName="u => u.Name"
+                       OnEdit="EditUser"
+                       OnDelete="DeleteUser" />
+        }
+        else
+        {
+            <p class="text-gray-500">⚠️ Ingen brugere fundet.</p>
+        }
+    </div>
+
+    <!-- Tilføj / Rediger Bruger Modal -->
+    @if (IsUserModalOpen)
+    {
+        <EditUserModal EditingUser="EditingUser"
+                       OnClose="CloseUserModal"
+                       OnSave="SaveUser" />
+    }
+</div>
+
+@code {
+    private List<User> UserList = new();
+    private List<User> FilteredUsers => string.IsNullOrWhiteSpace(SearchQuery) 
+        ? UserList 
+        : UserList.Where(u => u.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
+
+    private string SearchQuery = "";
+    private bool IsUserModalOpen = false;
+    private User EditingUser = new() { Name = string.Empty, Email = string.Empty };
+
+    protected override void OnInitialized()
+    {
+        UserList = UserService.GetUserList();
+    }
+
+    private void OpenAddUserModal()
+    {
+        EditingUser = new User { Name = "", Email = "", Role = "Bruger" };
+        IsUserModalOpen = true;
+    }
+
+    private void EditUser(User user)
+    {
+        EditingUser = new User
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+            Role = user.Role
+        };
+        IsUserModalOpen = true;
+    }
+
+    private void CloseUserModal()
+    {
+        IsUserModalOpen = false;
+    }
+
+    private void SaveUser(User updatedUser)
+    {
+        var existingUser = UserList.FirstOrDefault(u => u.Id == updatedUser.Id);
+        if (existingUser != null)
+        {
+            existingUser.Name = updatedUser.Name;
+            existingUser.Email = updatedUser.Email;
+            existingUser.Role = updatedUser.Role;
+        }
+        else
+        {
+            updatedUser.Id = new Random().Next(1000, 9999);
+            UserList.Add(updatedUser);
+        }
+
+        IsUserModalOpen = false;
+        StateHasChanged();
+    }
+
+    private void DeleteUser(User user)
+    {
+        UserList.Remove(user);
+        StateHasChanged();
+    }
+}

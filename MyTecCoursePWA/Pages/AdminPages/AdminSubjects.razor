@@ -1,7 +1,7 @@
 ﻿@using MyTecCoursePWA.Models;
 @using MyTecCoursePWA.Components.Buttons
 @using MyTecCoursePWA.Components.List;
-@using MyTecCoursePWA.Components.Modals; 
+@using MyTecCoursePWA.Components.Modals;
 
 @page "/AdminSubjects"
 @inject MockEducationService EducationService
@@ -75,7 +75,7 @@
     }
 
     <!-- Subject List -->
-    <div class="mt-6 rounded border p-4">
+    <div class="mt-6 max-h-120 overflow-y-auto rounded border p-4">
         <h3 class="text-lg font-semibold">Fag for: @(SelectedCourse?.Name ?? "Ingen valgt")</h3>
 
         @if (SelectedCourse != null && SelectedCourse.Subjects.Any())
@@ -93,11 +93,11 @@
     </div>
 
     <!-- Edit Subject Modal (Only Visible When Editing) -->
-    @if (IsEditingSubject) 
-    { 
-         <EditSubjectModal EditingSubject="EditingSubject"
-                           OnClose="CloseEditModal"
-                           OnSave="SaveEditedSubject" />
+    @if (IsEditingSubject)
+    {
+        <EditSubjectModal EditingSubject="EditingSubject"
+                          OnClose="CloseEditModal"
+                          OnSave="SaveEditedSubject" />
     }
 
 
