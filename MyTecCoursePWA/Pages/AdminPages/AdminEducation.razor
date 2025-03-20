@@ -1,6 +1,8 @@
 ﻿@using MyTecCoursePWA.Models;
 @using MyTecCoursePWA.Components.Buttons;
 @using MyTecCoursePWA.Components.List;
+@using MyTecCoursePWA.Services;
+@inject APIService APIService;
 @page "/AdminEducation"
 
 <div class="p-6">
@@ -11,23 +13,23 @@
     <div class="mt-4 flex items-center space-x-2">
         <!-- Input Field for Education Name -->
         <input type="text"
-               class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
-               placeholder="Indtast uddannelsens navn..."
-               @bind="NewEducationName"
-               @bind:event="oninput" />
+        class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
+        placeholder="Indtast uddannelsens navn..."
+        @bind="NewEducationName"
+        @bind:event="oninput" />
 
         <!-- Add Button (Disabled if Input is Empty) -->
         <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
-                           OnClick="AddEducation"
-                           IsDisabled="@(string.IsNullOrWhiteSpace(NewEducationName))" />
+        OnClick="AddEducationAsync"
+        IsDisabled="@(string.IsNullOrWhiteSpace(NewEducationName))" />
     </div>
 
     <!-- Reusable List Component -->
     <AdminList TItem="Education"
-               Items="EducationList"
-               GetItemName="e => e.Name"
-               OnEdit="EditEducation"
-               OnDelete="DeleteEducation" />
+    Items="EducationList"
+    GetItemName="e => e.Name"
+    OnEdit="EditEducation"
+    OnDelete="DeleteEducation" />
 
 </div>
 
@@ -36,12 +38,13 @@
 
     private List<Education> EducationList = new();
     private string NewEducationName = "";
-
-    protected override void OnInitialized()
+    private string endpoint = "Education";
+    protected override async Task OnInitializedAsync()
     {
-        EducationList = EducationService.GetEducationList();
+        EducationList = await APIService.GetAllAsync<Education>(endpoint);
     }
 
+    // old AddCourse method
     private void AddEducation()
     {
         if (!string.IsNullOrWhiteSpace(NewEducationName))
@@ -49,6 +52,17 @@
             var newEducation = new Education { Id = new Random().Next(1000, 9999), Name = NewEducationName };
             EducationList.Add(newEducation);
             NewEducationName = ""; // Clear input field after adding
+        }
+    }
+
+    private async Task AddEducationAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(NewEducationName))
+        {
+            var newEducation = new Education { Name = NewEducationName};
+            EducationList.Add(await APIService.PostAsync(endpoint, newEducation)); // this is a bad approach since the list is not updated from the API, so no id's are given
+            NewEducationName = ""; // Clear input field after adding
+			
         }
     }
 

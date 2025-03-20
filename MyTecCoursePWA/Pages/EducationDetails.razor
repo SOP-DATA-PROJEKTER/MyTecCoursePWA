@@ -5,6 +5,8 @@
 @inject MockEducationService EducationService
 @inject APIService ApiService
 
+<div class="m-20 h-full w-full">
+
 <h2 class="mb-4 text-xl font-bold md:text-2xl lg:text-4xl xl:text-xl">Vælg en uddannelsesvej</h2>
 
 @if (FilteredEducationList == null || FilteredEducationList.Count == 0)
@@ -142,6 +144,7 @@ else
         </div>
     }
 }
+</div>
 
 @code {
     [Parameter]

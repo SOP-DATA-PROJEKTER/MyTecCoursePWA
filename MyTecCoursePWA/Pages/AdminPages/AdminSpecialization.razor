@@ -3,127 +3,147 @@
 @using MyTecCoursePWA.Components.List;
 @page "/AdminSpecialization"
 @inject MockEducationService EducationService
+@inject APIService APIService
 
 <div class="p-6">
-    <h2 class="text-xl font-bold">🎓 Administrer Specialiseringer</h2>
-    <p class="text-gray-500">Her kan du oprette, redigere og slette specialiseringer.</p>
+	<h2 class="text-xl font-bold">🎓 Administrer Specialiseringer</h2>
+	<p class="text-gray-500">Her kan du oprette, redigere og slette specialiseringer.</p>
 
-    <!-- Select Education -->
-    <label class="mt-4 block text-sm font-semibold">Vælg Uddannelse:</label>
-    <select class="mt-2 w-full rounded border p-2" @bind="SelectedEducationId" @bind:event="onchange">
-        <option value="0">-- Vælg en uddannelse --</option>
-        @foreach (var edu in EducationList)
-        {
-            <option value="@edu.Id">@edu.Name</option>
-        }
-    </select>
+	<!-- Select Education -->
+	<label class="mt-4 block text-sm font-semibold">Vælg Uddannelse:</label>
+	<select class="mt-2 w-full rounded border p-2" @bind="SelectedEducationId" @bind:event="onchange">
+		<option value="0">-- Vælg en uddannelse --</option>
+		@foreach (var edu in EducationList)
+		{
+			<option value="@edu.Id">@edu.Name</option>
+		}
+	</select>
 
-    <!-- Select Pathway (updates dynamically based on selected Education) -->
-    <label class="mt-4 block text-sm font-semibold">Vælg Retning:</label>
-    <select class="mt-2 w-full rounded border p-2" @bind="SelectedPathwayId" @bind:event="onchange" disabled="@(SelectedEducation == null)">
-        <option value="0">-- Vælg en retning --</option>
-        @if (SelectedEducation != null)
-        {
-            @foreach (var path in SelectedEducation.Pathways)
-            {
-                <option value="@path.Id">@path.Name</option>
-            }
-        }
-    </select>
+	<!-- Select Pathway (updates dynamically based on selected Education) -->
+	<label class="mt-4 block text-sm font-semibold">Vælg Retning:</label>
+	<select class="mt-2 w-full rounded border p-2" @bind="SelectedPathwayId" @bind:event="onchange" disabled="@(SelectedEducation == null)">
+		<option value="0">-- Vælg en retning --</option>
+		@if (SelectedEducation != null)
+		{
+			@foreach (var path in SelectedEducation.Pathways)
+			{
+				<option value="@path.Id">@path.Name</option>
+			}
+		}
+	</select>
 
-    <!-- Add Specialization -->
-    @if (SelectedPathway != null)
-    {
-        <div class="mt-4 flex items-center space-x-2">
-            <input type="text" class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
-                   placeholder="Indtast specialiseringens navn..."
-                   @bind="NewSpecializationName"
-                   @bind:event="oninput" />
+	<!-- Add Specialization -->
+	@if (SelectedPathway != null)
+	{
+		<div class="mt-4 flex items-center space-x-2">
+			<input type="text" class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
+			placeholder="Indtast specialiseringens navn..."
+			@bind="NewSpecializationName"
+			@bind:event="oninput" />
 
-            <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
-                               OnClick="AddSpecialization"
-                               IsDisabled="@(string.IsNullOrWhiteSpace(NewSpecializationName))" />
-        </div>
-    }
+			<AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
+			OnClick="AddSpecializationAsync"
+			IsDisabled="@(string.IsNullOrWhiteSpace(NewSpecializationName))" />
+		</div>
+	}
 
-    <!-- Specialization List -->
-    <div class="mt-6 rounded border p-4">
-        <h3 class="text-lg font-semibold">Specialiseringer for: @(SelectedPathway?.Name ?? "Ingen valgt")</h3>
+	<!-- Specialization List -->
+	<div class="mt-6 rounded border p-4">
+		<h3 class="text-lg font-semibold">Specialiseringer for: @(SelectedPathway?.Name ?? "Ingen valgt")</h3>
 
-        @if (SelectedPathway != null && SelectedPathway.Specializations.Any())
-        {
-            <AdminList TItem="Specialization"
-                       Items="SelectedPathway.Specializations"
-                       GetItemName="s => s.Name"
-                       OnEdit="EditSpecialization"
-                       OnDelete="DeleteSpecialization" />
-        }
-        else
-        {
-            <p class="text-gray-500">⚠️ Ingen specialiseringer fundet. Vælg en retning eller tilføj en.</p>
-        }
-    </div>
+		@if (SelectedPathway != null && SelectedPathway.Specializations.Any())
+		{
+			<AdminList TItem="Specialization"
+			Items="SelectedPathway.Specializations"
+			GetItemName="s => s.Name"
+			OnEdit="EditSpecialization"
+			OnDelete="DeleteSpecialization" />
+		}
+		else
+		{
+			<p class="text-gray-500">⚠️ Ingen specialiseringer fundet. Vælg en retning eller tilføj en.</p>
+		}
+	</div>
 </div>
 
 @code {
-    private List<Education> EducationList = new();
-    private int SelectedEducationId
-    {
-        get => _selectedEducationId;
-        set
-        {
-            _selectedEducationId = value;
-            SelectedEducation = EducationList.FirstOrDefault(e => e.Id == value);
-            SelectedPathway = null; // Reset pathway when changing education
-            SelectedPathwayId = 0;
-            StateHasChanged();
-        }
-    }
-    private int _selectedEducationId = 0;
-    private Education? SelectedEducation;
+	private List<Education> EducationList = new();
+	private int SelectedEducationId
+	{
+		get => _selectedEducationId;
+		set
+		{
+			_selectedEducationId = value;
+			SelectedEducation = EducationList.FirstOrDefault(e => e.Id == value);
+			SelectedPathway = null; // Reset pathway when changing education
+			SelectedPathwayId = 0;
+			StateHasChanged();
+		}
+	}
+	private int _selectedEducationId = 0;
+	private Education? SelectedEducation;
 
-    private int SelectedPathwayId
-    {
-        get => _selectedPathwayId;
-        set
-        {
-            _selectedPathwayId = value;
-            SelectedPathway = SelectedEducation?.Pathways.FirstOrDefault(p => p.Id == value);
-            StateHasChanged();
-        }
-    }
-    private int _selectedPathwayId = 0;
-    private Pathway? SelectedPathway;
+	private int SelectedPathwayId
+	{
+		get => _selectedPathwayId;
+		set
+		{
+			_selectedPathwayId = value;
+			SelectedPathway = SelectedEducation?.Pathways.FirstOrDefault(p => p.Id == value);
+			StateHasChanged();
+		}
+	}
+	private int _selectedPathwayId = 0;
+	private Pathway? SelectedPathway;
 
-    private string NewSpecializationName = "";
+	private string NewSpecializationName = "";
 
-    protected override void OnInitialized()
-    {
-        EducationList = EducationService.GetEducationList();
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		string endpoint = "Education";
+		EducationList = await APIService.GetAllAsync<Education>(endpoint);
+	}
 
-    private void AddSpecialization()
-    {
-        if (SelectedPathway != null && !string.IsNullOrWhiteSpace(NewSpecializationName))
-        {
-            var newSpec = new Specialization { Id = new Random().Next(1000, 9999), Name = NewSpecializationName };
-            SelectedPathway.Specializations = SelectedPathway.Specializations.Append(newSpec).ToList();
-            NewSpecializationName = "";
-            StateHasChanged();
-        }
-    }
+	private void AddSpecialization()
+	{
+		if (SelectedPathway != null && !string.IsNullOrWhiteSpace(NewSpecializationName))
+		{
+			var newSpec = new Specialization { Id = new Random().Next(1000, 9999), Name = NewSpecializationName };
+			SelectedPathway.Specializations = SelectedPathway.Specializations.Append(newSpec).ToList();
+			NewSpecializationName = "";
+			StateHasChanged();
+		}
+	}
 
-    private void EditSpecialization(Specialization spec)
-    {
-        // Logic to edit specialization
-    }
+	private async Task AddSpecializationAsync()
+	{
+		if (SelectedPathway != null && !string.IsNullOrWhiteSpace(NewSpecializationName))
+		{
+			var newSpec = new Specialization 
+			{
+				Name = NewSpecializationName,
+				PathwayId = SelectedPathway.Id
 
-    private void DeleteSpecialization(Specialization spec)
-    {
-        if (SelectedPathway != null)
-        {
-            SelectedPathway.Specializations = SelectedPathway.Specializations.Where(s => s.Id != spec.Id).ToList();
-            StateHasChanged();
-        }
-    }
+			};
+			SelectedPathway.Specializations = SelectedPathway.Specializations.Append(await APIService.PostAsync("Specialization", newSpec)).ToList();
+			NewSpecializationName = "";
+			StateHasChanged();
+
+			
+		}
+	}
+
+	private void EditSpecialization(Specialization spec)
+	{
+		// Logic to edit specialization
+	}
+
+	private void DeleteSpecialization(Specialization spec)
+	{
+		if (SelectedPathway != null)
+		{
+			SelectedPathway.Specializations = SelectedPathway.Specializations.Where(s => s.Id != spec.Id).ToList();
+			StateHasChanged();
+		}
+	}
 }
