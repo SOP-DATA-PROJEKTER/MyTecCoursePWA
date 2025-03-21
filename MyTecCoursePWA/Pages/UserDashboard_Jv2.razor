@@ -4,13 +4,15 @@
 @using MyTecCoursePWA.Components.Selectors
 @inject MockEducationService EducationService
 @inject APIService APIService
-
-<div class="wrapper mx-6 flex flex-col space-y-6 justify-self-center bg-[var(--background-color-secondary)] px-2 py-6 lg:space-y-8 lg:pt-8 lg:w-3xl">
+@* lg:w-3xl *@
+<div class="wrapper mx-6 flex flex-col space-y-6 justify-self-center bg-[var(--background-color-secondary)] px-2 py-6 lg:w-full lg:space-y-8 lg:pt-8">
 
 
 	@if (isLoading)
 	{
-		<SkeletonBox amount="8" />
+		<div class="lg:my-12">
+			<SkeletonBox amount="8"  />
+		</div>
 	}
 	else
 	{

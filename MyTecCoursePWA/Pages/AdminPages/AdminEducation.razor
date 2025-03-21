@@ -1,17 +1,23 @@
 ﻿@using MyTecCoursePWA.Models;
 @using MyTecCoursePWA.Components.Buttons;
 @using MyTecCoursePWA.Components.Skeletons;
+@using MyTecCoursePWA.Components.Error;
 @using MyTecCoursePWA.Components.List;
-@using MyTecCoursePWA.Services;
 @inject APIService APIService;
 @page "/AdminEducation"
 
-<div class="p-6">
+<div class="">
 	<h2 class="text-xl font-bold">📚 Administrer Uddannelser</h2>
 	<p class="text-gray-500">Her kan du oprette, redigere og slette uddannelser.</p>
+	@if(isApiFailed)
+	{
+		<ErrorBox/>
+	}
 	@if (isLoading)
 	{
-		<SkeletonBox amount="2" />
+		<div class="flex w-full justify-items-center py-8">
+			<SkeletonBox amount="1" flexDirection="flex-col" lgWidth="lg:w-full" />
+		</div>
 	}
 	else
 	{
@@ -19,23 +25,24 @@
 		<div class="mt-4 flex items-center space-x-2">
 			<!-- Input Field for Education Name -->
 			<input type="text"
-				   class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
-				   placeholder="Indtast uddannelsens navn..."
-				   @bind="NewEducationName"
-				   @bind:event="oninput" />
+				   class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300 @errorStyle"
+			placeholder="Indtast uddannelsens navn..."
+			@bind="NewEducationName"
+			@bind:event="oninput"
+			disabled="@isApiFailed"/>
 
 			<!-- Add Button (Disabled if Input is Empty) -->
-			<AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
-							   OnClick="AddEducationAsync"
-							   IsDisabled="@(string.IsNullOrWhiteSpace(NewEducationName))" />
+				<AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
+				OnClick="AddEducationAsync"
+				IsDisabled="@(string.IsNullOrWhiteSpace(NewEducationName) || isApiFailed)" />
 		</div>
 
 		<!-- Reusable List Component -->
 		<AdminList TItem="Education"
-				   Items="EducationList"
-				   GetItemName="e => e.Name"
-				   OnEdit="EditEducation"
-				   OnDelete="DeleteEducationAsync" />
+		Items="EducationList"
+		GetItemName="e => e.Name"
+		OnEdit="EditEducation"
+		OnDelete="DeleteEducationAsync" />
 	}
 
 </div>
@@ -45,6 +52,8 @@
 	private List<Education> EducationList = new();
 	private string NewEducationName = "";
 	private bool isLoading = true;
+	private bool isApiFailed = false;
+	private string errorStyle = "";
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -53,11 +62,20 @@
 			string endpoint = "Education";
 			EducationList = await APIService.GetAllAsync<Education>(endpoint);
 		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			isApiFailed = true;
+		}
 		finally
 		{
-			await Task.Delay(2000);
+			isApiFailed = EducationList.Count == 0;
 			isLoading = false;
 			StateHasChanged();
+			if(isApiFailed)
+			{
+				errorStyle = "bg-gray-200 hover:cursor-not-allowed";
+			}
 		}
 	}
 
