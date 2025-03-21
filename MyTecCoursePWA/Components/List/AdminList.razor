@@ -17,7 +17,7 @@
 
                 <div class="flex space-x-2">
                     <AdminActionButton ButtonType="edit" Icon="✏️" Text="Rediger" OnClick="() => OnEdit.InvokeAsync(item)" />
-                    <AdminActionButton ButtonType="delete" Icon="🗑" Text="Slet" OnClick="() => OnDelete.InvokeAsync(item)" />
+                    <AdminActionButton ButtonType="delete" Icon="🗑" Text="Slet" OnClick="() => OnDelete.InvokeAsync(item)" IsDisabled="@isDisabled" />
                 </div>
             </div>
         }
@@ -33,4 +33,5 @@
     [Parameter] public Func<TItem, string> GetItemName { get; set; } = default!;
     [Parameter] public EventCallback<TItem> OnEdit { get; set; }
     [Parameter] public EventCallback<TItem> OnDelete { get; set; }
+    [Parameter] public bool isDisabled { get; set; } = false;
 }

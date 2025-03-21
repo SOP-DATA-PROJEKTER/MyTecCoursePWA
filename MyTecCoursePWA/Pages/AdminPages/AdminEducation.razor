@@ -1,74 +1,110 @@
 ﻿@using MyTecCoursePWA.Models;
 @using MyTecCoursePWA.Components.Buttons;
+@using MyTecCoursePWA.Components.Skeletons;
+@using MyTecCoursePWA.Components.Error;
 @using MyTecCoursePWA.Components.List;
-@using MyTecCoursePWA.Services;
 @inject APIService APIService;
 @page "/AdminEducation"
 
-<div class="p-6">
-    <h2 class="text-xl font-bold">📚 Administrer Uddannelser</h2>
-    <p class="text-gray-500">Her kan du oprette, redigere og slette uddannelser.</p>
+<div class="">
+	<h2 class="text-xl font-bold">📚 Administrer Uddannelser</h2>
+	<p class="text-gray-500">Her kan du oprette, redigere og slette uddannelser.</p>
+	@if(isApiFailed)
+	{
+		<ErrorBox/>
+	}
+	@if (isLoading)
+	{
+		<div class="flex w-full justify-items-center py-8">
+			<SkeletonBox amount="1" flexDirection="flex-col" lgWidth="lg:w-full" />
+		</div>
+	}
+	else
+	{
+		<!-- Add New Education Input + Button -->
+		<div class="mt-4 flex items-center space-x-2">
+			<!-- Input Field for Education Name -->
+			<input type="text"
+				   class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300 @errorStyle"
+			placeholder="Indtast uddannelsens navn..."
+			@bind="NewEducationName"
+			@bind:event="oninput"
+			disabled="@isApiFailed"/>
 
-    <!-- Add New Education Input + Button -->
-    <div class="mt-4 flex items-center space-x-2">
-        <!-- Input Field for Education Name -->
-        <input type="text"
-        class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
-        placeholder="Indtast uddannelsens navn..."
-        @bind="NewEducationName"
-        @bind:event="oninput" />
+			<!-- Add Button (Disabled if Input is Empty) -->
+				<AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
+				OnClick="AddEducationAsync"
+				IsDisabled="@(string.IsNullOrWhiteSpace(NewEducationName) || isApiFailed)" />
+		</div>
 
-        <!-- Add Button (Disabled if Input is Empty) -->
-        <AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
-        OnClick="AddEducationAsync"
-        IsDisabled="@(string.IsNullOrWhiteSpace(NewEducationName))" />
-    </div>
-
-    <!-- Reusable List Component -->
-    <AdminList TItem="Education"
-    Items="EducationList"
-    GetItemName="e => e.Name"
-    OnEdit="EditEducation"
-    OnDelete="DeleteEducationAsync" />
+		<!-- Reusable List Component -->
+		<AdminList TItem="Education"
+		Items="EducationList"
+		GetItemName="e => e.Name"
+		OnEdit="EditEducation"
+		OnDelete="DeleteEducationAsync" />
+	}
 
 </div>
 
 @code {
-    [Inject] private MockEducationService EducationService { get; set; }
 
-    private List<Education> EducationList = new();
-    private string NewEducationName = "";
-    private string endpoint = "Education";
-    protected override async Task OnInitializedAsync()
-    {
-        EducationList = await APIService.GetAllAsync<Education>(endpoint);
-    }
+	private List<Education> EducationList = new();
+	private string NewEducationName = "";
+	private bool isLoading = true;
+	private bool isApiFailed = false;
+	private string errorStyle = "";
 
-    private async Task AddEducationAsync()
-    {
-        if (!string.IsNullOrWhiteSpace(NewEducationName))
-        {
-            var newEducation = new Education { Name = NewEducationName};
-            EducationList.Add(await APIService.PostAsync(endpoint, newEducation)); // this is a bad approach since the list is not updated from the API, so no id's are given
-            NewEducationName = ""; // Clear input field after adding
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			string endpoint = "Education";
+			EducationList = await APIService.GetAllAsync<Education>(endpoint);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			isApiFailed = true;
+		}
+		finally
+		{
+			isApiFailed = EducationList.Count == 0;
+			isLoading = false;
+			StateHasChanged();
+			if(isApiFailed)
+			{
+				errorStyle = "bg-gray-200 hover:cursor-not-allowed";
+			}
+		}
+	}
 
-        }
-    }
+	private async Task AddEducationAsync()
+	{
+		if (!string.IsNullOrWhiteSpace(NewEducationName))
+		{
+			string endpoint = "Education";
+			var newEducation = new Education { Name = NewEducationName };
+			EducationList.Add(await APIService.PostAsync(endpoint, newEducation)); // this is a bad approach since the list is not updated from the API, so no id's are given
+			NewEducationName = ""; // Clear input field after adding
 
-    private void EditEducation(Education edu)
-    {
-        // Open modal or inline editing logic
-    }
+		}
+	}
 
-    private async Task DeleteEducationAsync(Education edu)
-    {
-        string endpoint = "Education";
+	private void EditEducation(Education edu)
+	{
+		// Open modal or inline editing logic
+	}
 
-        if(await APIService.DeleteAsync<Education>(endpoint, edu.Id))
-        {
-            EducationList.Remove(edu);
-        }
+	private async Task DeleteEducationAsync(Education edu)
+	{
+		string endpoint = "Education";
 
-    }
+		if (await APIService.DeleteAsync<Education>(endpoint, edu.Id))
+		{
+			EducationList.Remove(edu);
+		}
+
+	}
 
 }

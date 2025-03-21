@@ -1,196 +1,223 @@
 ﻿@page "/UserDashboard_Jv2"
+@using MyTecCoursePWA.Components.Skeletons
 @using MyTecCoursePWA.Models
 @using MyTecCoursePWA.Components.Selectors
 @inject MockEducationService EducationService
+@inject APIService APIService
+@* lg:w-3xl *@
+<div class="wrapper mx-6 flex flex-col space-y-6 justify-self-center bg-[var(--background-color-secondary)] px-2 py-6 lg:w-full lg:space-y-8 lg:pt-8">
 
-<div class="wrapper mx-6 flex flex-col space-y-6 justify-self-center bg-[var(--background-color-secondary)] px-2 py-6 lg:space-y-8 lg:pt-8 lg:w-3xl">
-    <div class="rounded-lg p-6 shadow-lg shadow-black">
-        <div class="mb-4 flex items-center">
-            <div class="h-12 w-12 overflow-hidden rounded-full">
-                <img src="./ProfilePicture_Default.jpg" alt="Profile Picture" class="h-full w-full object-cover" />
-            </div>
-            <div class="mx-4 flex-1 border-b-2">
-                <input type="text" name="name" value="@user.Name" class="w-full pl-4 text-black focus:border-black focus:outline-none focus:border-b-0 focus:border-2" placeholder="Enter your name" />
-            </div>
-        </div>
 
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <StyledSelector TItem="Education"
-            Items="educationList"
-            SelectedValue="@selectedEducationName"
-            SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Education))" />
+	@if (isLoading)
+	{
+		<div class="lg:my-12">
+			<SkeletonBox amount="8"  />
+		</div>
+	}
+	else
+	{
+		<div class="rounded-lg p-6 shadow-lg shadow-black">
+			<div class="mb-4 flex items-center">
+				<div class="h-12 w-12 overflow-hidden rounded-full">
+					<img src="./ProfilePicture_Default.jpg" alt="Profile Picture" class="h-full w-full object-cover" />
+				</div>
+				<div class="mx-4 flex-1 border-b-2">
+					<input type="text" name="name" value="@user.Name" class="w-full pl-4 text-black focus:border-black focus:outline-none focus:border-b-0 focus:border-2" placeholder="Enter your name" />
+				</div>
+			</div>
 
-            <StyledSelector TItem="Pathway"
-            Items="selectedEducation?.Pathways ?? new List<Pathway>()"
-            SelectedValue="@selectedPathwayName"
-            SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Pathway))" />
+			<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+				<StyledSelector TItem="Education"
+				Items="educationList"
+				SelectedValue="@selectedEducationName"
+				SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Education))" />
 
-            <StyledSelector TItem="Specialization"
-            Items="selectedPathway?.Specializations ?? new List<Specialization>()"
-            SelectedValue="@selectedSpecializationName"
-            SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Specialization))" />
+				<StyledSelector TItem="Pathway"
+				Items="selectedEducation?.Pathways ?? new List<Pathway>()"
+				SelectedValue="@selectedPathwayName"
+				SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Pathway))" />
 
-            <StyledSelector TItem="Course"
-            Items="selectedSpecialization?.Courses ?? new List<Course>()"
-            SelectedValue="@selectedCourseName"
-            SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Course))" />
+				<StyledSelector TItem="Specialization"
+				Items="selectedPathway?.Specializations ?? new List<Specialization>()"
+				SelectedValue="@selectedSpecializationName"
+				SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Specialization))" />
 
-        </div>
-    </div>
+				<StyledSelector TItem="Course"
+				Items="selectedSpecialization?.Courses ?? new List<Course>()"
+				SelectedValue="@selectedCourseName"
+				SelectedValueChanged="@(value => OnSelectionChanged(value, SelectionType.Course))" />
 
-    @for (int i = 0; i < subjectList.Count; i++)
-    {
-        var subject = subjectList[i];
-        var colorClass = GetColorClass((ColorSelection)(i % 2));
-        var textColorClass = GetTextColorClass((ColorSelection)(i % 2));
+			</div>
+		</div>
 
-        <div class="@($"space-y-4 rounded-lg p-4 shadow-lg shadow-black {colorClass}")">
-            <div class="p-4">
-                <h3 class="@($"{textColorClass} pb-4 font-semibold")">@subject.Name</h3>
-                <div class="space-y-4">
-                    @foreach (var milestone in subject.Milestones)
-                    {
-                        <div>
-                            <h4 class="@($"{textColorClass} text-md font-medium")">@milestone.Description</h4>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    }
+		@for (int i = 0; i < subjectList.Count; i++)
+		{
+			var subject = subjectList[i];
+			var colorClass = GetColorClass((ColorSelection)(i % 2));
+			var textColorClass = GetTextColorClass((ColorSelection)(i % 2));
 
+			<div class="@($"space-y-4 rounded-lg p-4 shadow-lg shadow-black {colorClass}")">
+				<div class="p-4">
+					<h3 class="@($"{textColorClass} pb-4 font-semibold")">@subject.Name</h3>
+					<div class="space-y-4">
+						@foreach (var milestone in subject.Milestones)
+						{
+							<div>
+								<h4 class="@($"{textColorClass} text-md font-medium")">@milestone.Description</h4>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		}
+
+	}
 </div>
 
 @code {
-    private string selectedEducationName;
-    private string selectedPathwayName;
-    private string selectedSpecializationName;
-    private string selectedCourseName;
+	private string selectedEducationName;
+	private string selectedPathwayName;
+	private string selectedSpecializationName;
+	private string selectedCourseName;
 
-    private Education selectedEducation;
-    private Pathway selectedPathway;
-    private Specialization selectedSpecialization;
-    private Course selectedCourse;
-    private List<Subject> subjectList;
-    private List<Education> educationList;
-    private User user;
+	private Education selectedEducation;
+	private Pathway selectedPathway;
+	private Specialization selectedSpecialization;
+	private Course selectedCourse;
+	private List<Subject> subjectList = new();
+	private List<Education> educationList = new();
+	private User user;
 
-    private enum SelectionType
-    {
-        Education,
-        Pathway,
-        Specialization,
-        Course
-    }
+	private bool isLoading = true;
 
-    private enum ColorSelection
-    {
-        Color1,
-        Color2,
-    }
+	private enum SelectionType
+	{
+		Education,
+		Pathway,
+		Specialization,
+		Course
+	}
 
-    private string GetColorClass(ColorSelection selection)
-    {
-        return selection switch
-        {
-            ColorSelection.Color1 => "bg-[var(--background-secondary)] bg-gradient-to-b from-gray-700 to-gray-800",
-            ColorSelection.Color2 => "bg-white",
-            _ => "bg-white"
-        };
-    }
+	private enum ColorSelection
+	{
+		Color1,
+		Color2,
+	}
 
-    private string GetTextColorClass(ColorSelection selection)
-    {
-        return selection switch
-        {
-            ColorSelection.Color1 => "text-[var(--text-color-secondary)]",
-            ColorSelection.Color2 => "text-gray-800",
-        };
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		string endpoint = "education";
+		try
+		{
+			educationList = await APIService.GetAllAsync<Education>(endpoint);
 
-    private void OnSelectionChanged(string value, SelectionType selectionType)
-    {
-        switch (selectionType)
-        {
-            case SelectionType.Education:
-                selectedEducationName = value;
-                selectedEducation = educationList.Find(x => x.Name == selectedEducationName);
+			selectedEducation = educationList.Find(x => x.Name == "EUD");
+			Console.WriteLine(selectedEducation.Name);
+			selectedPathway = selectedEducation?.Pathways.Find(x => x.Name == "Data og Kommunikation");
+			Console.WriteLine(selectedPathway.Name);
+			selectedSpecialization = selectedPathway?.Specializations.Find(x => x.Name == "Programmering");
+			Console.WriteLine(selectedSpecialization.Name);
+			selectedCourse = selectedSpecialization?.Courses.Find(x => x.Name == "Hovedforløb 1");
+			Console.WriteLine(selectedCourse.Name);
 
-                // Ensure pathway is null and UI does not preselect one
-                selectedPathway = null;
-                selectedSpecialization = null;
-                selectedCourse = null;
+			selectedEducationName = selectedEducation?.Name ?? "";
+			selectedPathwayName = selectedPathway?.Name ?? "";
+			selectedSpecializationName = selectedSpecialization?.Name ?? "";
+			selectedCourseName = selectedCourse?.Name ?? "";
 
-                selectedPathwayName = null;  // Instead of empty string
-                selectedSpecializationName = null;
-                selectedCourseName = null;
-                break;
+			user = new User
+				{
+					Name = "John Doe",
+					SelectedEducation = selectedEducation?.Name ?? "",
+					SelectedPathway = selectedPathway?.Name ?? "",
+					SelectedSpecialization = selectedSpecialization?.Name ?? "",
+					SelectedCourse = selectedCourse?.Name ?? ""
+				};
 
-            case SelectionType.Pathway:
-                selectedPathwayName = value;
-                selectedPathway = selectedEducation?.Pathways?.Find(x => x.Name == selectedPathwayName);
-                selectedSpecialization = null;
-                selectedCourse = null;
+		}
+		finally
+		{
+			updateSubjectList();
+			isLoading = false;
+			StateHasChanged();
+		}
+	}
 
-                selectedSpecializationName = null;
-                selectedCourseName = null;
-                break;
+	private string GetColorClass(ColorSelection selection)
+	{
+		return selection switch
+		{
+			ColorSelection.Color1 => "bg-[var(--background-secondary)] bg-gradient-to-b from-gray-700 to-gray-800",
+			ColorSelection.Color2 => "bg-white",
+			_ => "bg-white"
+		};
+	}
 
-            case SelectionType.Specialization:
-                selectedSpecializationName = value;
-                selectedSpecialization = selectedPathway?.Specializations?.Find(x => x.Name == selectedSpecializationName);
-                selectedCourse = null;
-                selectedCourseName = null;
-                break;
+	private string GetTextColorClass(ColorSelection selection)
+	{
+		return selection switch
+		{
+			ColorSelection.Color1 => "text-[var(--text-color-secondary)]",
+			ColorSelection.Color2 => "text-gray-800",
+		};
+	}
 
-            case SelectionType.Course:
-                selectedCourseName = value;
-                selectedCourse = selectedSpecialization?.Courses?.Find(x => x.Name == selectedCourseName);
-                break;
-        }
+	private void OnSelectionChanged(string value, SelectionType selectionType)
+	{
+		switch (selectionType)
+		{
+			case SelectionType.Education:
+				selectedEducationName = value;
+				selectedEducation = educationList.Find(x => x.Name == selectedEducationName);
 
-        updateSubjectList();
-    }
+				// Ensure pathway is null and UI does not preselect one
+				selectedPathway = null;
+				selectedSpecialization = null;
+				selectedCourse = null;
 
+				selectedPathwayName = null;  // Instead of empty string
+				selectedSpecializationName = null;
+				selectedCourseName = null;
+				break;
 
-    protected override void OnInitialized()
-    {
-        educationList = EducationService.GetEducationList();
-        selectedEducation = educationList.Find(x => x.Name == "EUD");
-        selectedPathway = selectedEducation?.Pathways.Find(x => x.Name == "Data og Kommunikation");
-        selectedSpecialization = selectedPathway?.Specializations.Find(x => x.Name == "Programmering");
-        selectedCourse = selectedSpecialization?.Courses.Find(x => x.Name == "Hovedforløb 1");
+			case SelectionType.Pathway:
+				selectedPathwayName = value;
+				selectedPathway = selectedEducation?.Pathways?.Find(x => x.Name == selectedPathwayName);
+				selectedSpecialization = null;
+				selectedCourse = null;
 
-        selectedEducationName = selectedEducation?.Name ?? "";
-        selectedPathwayName = selectedPathway?.Name ?? "";
-        selectedSpecializationName = selectedSpecialization?.Name ?? "";
-        selectedCourseName = selectedCourse?.Name ?? "";
+				selectedSpecializationName = null;
+				selectedCourseName = null;
+				break;
 
+			case SelectionType.Specialization:
+				selectedSpecializationName = value;
+				selectedSpecialization = selectedPathway?.Specializations?.Find(x => x.Name == selectedSpecializationName);
+				selectedCourse = null;
+				selectedCourseName = null;
+				break;
 
-        user = new User
-            {
-                Name = "John Doe",
-                SelectedEducation = selectedEducation?.Name ?? "",
-                SelectedPathway = selectedPathway?.Name ?? "",
-                SelectedSpecialization = selectedSpecialization?.Name ?? "",
-                SelectedCourse = selectedCourse?.Name ?? ""
-            };
+			case SelectionType.Course:
+				selectedCourseName = value;
+				selectedCourse = selectedSpecialization?.Courses?.Find(x => x.Name == selectedCourseName);
+				break;
+		}
 
-        updateSubjectList();
-    }
+		updateSubjectList();
+	}
 
-    private void updateSubjectList()
-    {
-        subjectList = selectedCourse?.Subjects ?? new List<Subject>();
-        StateHasChanged();
-    }
+	private void updateSubjectList()
+	{
+		subjectList = selectedCourse?.Subjects ?? new List<Subject>();
+		StateHasChanged();
+	}
 
-    public class User
-    {
-        public string Name { get; set; }
-        public string SelectedEducation { get; set; }
-        public string SelectedPathway { get; set; }
-        public string SelectedSpecialization { get; set; }
-        public string SelectedCourse { get; set; }
-    }
+	public class User
+	{
+		public string Name { get; set; }
+		public string SelectedEducation { get; set; }
+		public string SelectedPathway { get; set; }
+		public string SelectedSpecialization { get; set; }
+		public string SelectedCourse { get; set; }
+	}
 }

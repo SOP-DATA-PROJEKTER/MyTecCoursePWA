@@ -72,6 +72,20 @@ namespace MyTecCoursePWA.Services
             }
         }
 
+        public async Task<T> PutAsync<T>(string endpoint, T data)
+        {
+            try
+            {
+                var response = await _httpClient.PutAsJsonAsync($"{_baseEndpoint}/{endpoint}", data);
+                return await response.Content.ReadFromJsonAsync<T>();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating data from {endpoint}: {ex.Message}");
+                return default;
+            }
+        }
+
 
     }
 }
