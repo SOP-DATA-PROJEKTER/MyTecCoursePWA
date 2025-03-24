@@ -1,0 +1,35 @@
+﻿@* GenericForm.razor *@
+
+@using MyTecCoursePWA.Interfaces
+@typeparam T where T : ISelectable
+@inject NavigationManager Navigation
+
+<h3 class="my-4 text-center text-2xl font-bold">Opret ny @typeof(T).Name</h3>
+
+<div class="mx-auto flex max-w-md flex-col rounded-xl bg-white p-4 shadow-lg">
+    <EditForm Model="Item" OnValidSubmit="SubmitValueChangeHandler">
+        <DataAnnotationsValidator />
+
+        <div class="mb-4">
+            <label class="block text-sm font-medium">Navn:</label>
+            <InputText class="w-full rounded border p-2" @bind-Value="Item.Name" />
+        </div>
+
+        <button type="submit" class="mt-4 w-full rounded-lg bg-green-500 px-4 py-2 text-white">Gem</button>
+    </EditForm>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public T Item { get; set; } = default!;
+    [Parameter, EditorRequired] public EventCallback<T> SaveChanges { get; set; }
+
+    protected override void OnInitialized()
+    {
+        
+    }
+
+    private async Task SubmitValueChangeHandler()
+    {
+        await SaveChanges.InvokeAsync(Item);
+    }
+}

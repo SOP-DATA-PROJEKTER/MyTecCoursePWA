@@ -1,8 +1,11 @@
-﻿@page "/education/{educationId}"
+﻿@page "/{educationName}/{id}"
 @using MyTecCoursePWA.Models
 @using MyTecCoursePWA.Components.Buttons
 
 @inject MockEducationService EducationService
+@inject APIService ApiService
+
+<div class="m-4 h-full w-full lg:m-20">
 
 <h2 class="mb-4 text-xl font-bold md:text-2xl lg:text-4xl xl:text-xl">Vælg en uddannelsesvej</h2>
 
@@ -18,7 +21,7 @@ else
             <h3 class="text-lg font-semibold md:text-xl lg:text-2xl xl:text-lg">@education.Name</h3>
 
             <!-- Pathway Selection -->
-            <div class="mt-2 gap-2 flex flex-wrap">
+            <div class="mt-2 flex flex-wrap gap-2">
                 @foreach (var pathway in education.Pathways)
                 {
                     bool isPathwaySelected = SelectedPathwayId == pathway.Id;
@@ -26,10 +29,10 @@ else
 
                     if (showPathway)
                     {
-                        
+
                         <SelectionButton Label="@pathway.Name"
-                                         IsSelected="isPathwaySelected"
-                                         OnClick="() => TogglePathway(pathway.Id)" />
+                        IsSelected="isPathwaySelected"
+                        OnClick="() => TogglePathway(pathway.Id)" />
                     }
                 }
             </div>
@@ -42,7 +45,7 @@ else
                 {
                     <div class="mt-2">
                         <h4 class="text-base font-semibold md:text-lg lg:text-xl xl:text-base">Vælg en specialisering:</h4>
-                        <div class="mt-1 gap-2 flex flex-wrap">
+                        <div class="mt-1 flex flex-wrap gap-2">
                             @foreach (var specialization in selectedPathway.Specializations)
                             {
                                 bool isSpecializationSelected = SelectedSpecializationId == specialization.Id;
@@ -51,8 +54,8 @@ else
                                 if (showSpecialization)
                                 {
                                     <SelectionButton Label="@specialization.Name"
-                                                     IsSelected="isSpecializationSelected"
-                                                     OnClick="() => ToggleSpecialization(specialization.Id)" />
+                                    IsSelected="isSpecializationSelected"
+                                    OnClick="() => ToggleSpecialization(specialization.Id)" />
                                 }
                             }
                         </div>
@@ -71,7 +74,7 @@ else
                 {
                     <div class="mt-2">
                         <h4 class="text-base font-semibold md:text-lg lg:text-xl xl:text-base">Vælg et forløb:</h4>
-                        <div class="mt-1 gap-2 flex flex-wrap">
+                        <div class="mt-1 flex flex-wrap gap-2">
                             @foreach (var course in selectedSpecialization.Courses)
                             {
                                 bool isCourseSelected = SelectedCourseId == course.Id;
@@ -80,8 +83,8 @@ else
                                 if (showCourse)
                                 {
                                     <SelectionButton Label="@course.Name"
-                                                     IsSelected="isCourseSelected"
-                                                     OnClick="() => ToggleCourse(course.Id)" />
+                                    IsSelected="isCourseSelected"
+                                    OnClick="() => ToggleCourse(course.Id)" />
                                 }
                             }
                         </div>
@@ -92,24 +95,32 @@ else
                             var selectedCourse = selectedSpecialization.Courses.FirstOrDefault(c => c.Id == SelectedCourseId);
                             if (selectedCourse != null)
                             {
-                                <div class="mt-2 border-blue-500 bg-gray-200 p-4 rounded-md border-l-4 transition-colors duration-200">
+                                <div class="mt-2 rounded-md border-l-4 border-blue-500 bg-gray-200 p-4 transition-colors duration-200">
                                     @if (selectedCourse.Subjects.Any())
                                     {
                                         @foreach (var subject in selectedCourse.Subjects)
                                         {
-                                            <div key="@subject.Id" class="mb-4 bg-gray-300 p-4 rounded-md">
+                                            <div key="@subject.Id" class="mb-4 rounded-md bg-gray-300 p-4">
                                                 <!-- Subject button to expand details -->
-                                                <button class="bg-gray-300 p-2 text-gray-900 flex w-full cursor-pointer items-center justify-between rounded-md text-left font-semibold transition hover:bg-blue-500 hover:text-white"
-                                                    @onclick="() => ToggleSubject(subject.Id)">
+                                                <button class="flex w-full cursor-pointer items-center justify-between rounded-md bg-gray-300 p-2 text-left font-semibold text-gray-900 transition hover:bg-blue-500 hover:text-white"
+                                                @onclick="() => ToggleSubject(subject.Id)">
                                                     @subject.Name <span>@(ExpandedSubjects.Contains(subject.Id) ? "🔼" : "🔽")</span>
                                                 </button>
 
                                                 <!-- Show subject details when expanded -->
                                                 @if (ExpandedSubjects.Contains(subject.Id))
                                                 {
-                                                    <div class="mt-2 bg-gray-200 p-2 text-gray-900 rounded-md">
-                                                        <h4 class="mt-3 text-blue-500 text-base font-semibold md:text-lg lg:text-xl xl:text-base">🚀 Milepæle:</h4>
-                                                        <ul class="pl-4 list-disc">
+                                                    <div class="mt-2 rounded-md bg-gray-200 p-2 text-gray-900">
+                                                        <h4 class="mt-3 text-base font-semibold text-blue-500 md:text-lg lg:text-xl xl:text-base">📖  Fagbeskrivelse:
+                                                        </h4>
+                                                        <ul class="list-disc pl-4">
+                                                            <li class="text-base md:text-lg lg:text-xl xl:text-base">@subject.Description</li>
+
+                                                        </ul>
+                                                    </div>
+                                                    <div class="mt-2 rounded-md bg-gray-200 p-2 text-gray-900">
+                                                        <h4 class="mt-3 text-base font-semibold text-blue-500 md:text-lg lg:text-xl xl:text-base">✔️ Målpinde:</h4>
+                                                        <ul class="list-disc pl-4">
                                                             @foreach (var milestone in subject.Milestones)
                                                             {
                                                                 <li class="text-base md:text-lg lg:text-xl xl:text-base">@milestone.Description</li>
@@ -133,10 +144,13 @@ else
         </div>
     }
 }
+</div>
 
 @code {
     [Parameter]
-    public string educationId { get; set; }
+    public string educationName { get; set; }
+    [Parameter]
+    public string id { get; set; }
 
     private Education? Education;
     private Pathway? SelectedPathway;
@@ -145,9 +159,9 @@ else
     private HashSet<int> ExpandedSubjects = new HashSet<int>();
     private List<Education> FilteredEducationList = new List<Education>();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        Education = EducationService.GetEducationByName(educationId);
+        Education = await ApiService.GetByIdAsync<Education>("Education", id);
         FilteredEducationList = Education != null ? new List<Education> { Education } : new List<Education>();
     }
 

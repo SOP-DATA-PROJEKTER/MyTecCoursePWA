@@ -1,0 +1,101 @@
+﻿@page "/form/{className}"
+@using MyTecCoursePWA.Models
+@using MyTecCoursePWA.Services
+@using MyTecCoursePWA.Components.Forms
+@inject MockEducationService EducationService
+@inject NavigationManager Navigation
+
+<div class="mx-auto flex max-w-md flex-col rounded-xl bg-white p-4 shadow-lg">
+    @if (ClassName == "Education")
+    {
+        <GenericForm T="Education" Item="SelectedEducation" SaveChanges="SaveEducation" />
+    }
+    else if (ClassName == "Pathway")
+    {
+        <GenericForm T="Pathway" Item="SelectedPathway" SaveChanges="SavePathway" />
+    }
+    else if (ClassName == "Specialization")
+    {
+        <GenericForm T="Specialization" Item="SelectedSpecialization" SaveChanges="SaveSpecialization" />
+    }
+    else if (ClassName == "Course")
+    {
+        <GenericForm T="Course" Item="SelectedCourse" SaveChanges="SaveCourse" />
+    }
+    else if (ClassName == "Subject")
+    {
+        <GenericForm T="Subject" Item="SelectedSubject" SaveChanges="SaveSubject" />
+    }
+    else
+    {
+        <p class="text-center text-red-500">Invalid form type: @ClassName</p>
+    }
+</div>
+
+@code {
+    [Parameter] public string ClassName { get; set; } = string.Empty;
+    [Parameter][SupplyParameterFromQuery] public string? Education { get; set; }
+    [Parameter][SupplyParameterFromQuery] public string? Pathway { get; set; }
+    [Parameter][SupplyParameterFromQuery] public string? Specialization { get; set; }
+    [Parameter][SupplyParameterFromQuery] public string? Course { get; set; }
+    [Parameter][SupplyParameterFromQuery] public string? Subject { get; set; }
+
+    private Education SelectedEducation { get; set; }
+    private Pathway SelectedPathway { get; set; }
+    private Specialization SelectedSpecialization { get; set; }
+    private Course SelectedCourse { get; set; } 
+    private Subject SelectedSubject { get; set; }
+
+    protected override void OnInitialized()
+    {
+        var allEducations = EducationService.GetEducationList();
+        SelectedEducation = allEducations.FirstOrDefault(e => e.Name == Education) ?? new Education() { Name = ""};
+
+        if (SelectedEducation != null && !string.IsNullOrEmpty(Pathway))
+        {
+            SelectedPathway = SelectedEducation.Pathways.FirstOrDefault(p => p.Name == Pathway) ?? new Pathway() { Name = ""};
+        }
+        if (SelectedPathway != null && !string.IsNullOrEmpty(Specialization))
+        {
+            SelectedSpecialization = SelectedPathway.Specializations.FirstOrDefault(s => s.Name == Specialization) ?? new Specialization() { Name = "" };
+        }
+        if (SelectedSpecialization != null && !string.IsNullOrEmpty(Course))
+        {
+            SelectedCourse = SelectedSpecialization.Courses.FirstOrDefault(c => c.Name == Course) ?? new Course() { Name = "" };
+        }
+        if (SelectedCourse != null && !string.IsNullOrEmpty(Subject))
+        {
+            SelectedSubject = SelectedCourse.Subjects.FirstOrDefault(s => s.Name == Subject) ?? new Subject() { Name = "" };
+        }
+    }
+
+    private void SaveEducation(Education education)
+    {
+        // Save logic for Education
+        Navigation.NavigateTo("/MyTestPage");
+    }
+
+    private void SavePathway(Pathway pathway)
+    {
+        // Save logic for Pathway
+        Navigation.NavigateTo("/MyTestPage");
+    }
+
+    private void SaveSpecialization(Specialization specialization)
+    {
+        // Save logic for Specialization
+        Navigation.NavigateTo("/MyTestPage");
+    }
+
+    private void SaveCourse(Course course)
+    {
+        // Save logic for Course
+        Navigation.NavigateTo("/MyTestPage");
+    }
+
+    private void SaveSubject(Subject subject)
+    {
+        // Save logic for Subject
+        Navigation.NavigateTo("/MyTestPage");
+    }
+}

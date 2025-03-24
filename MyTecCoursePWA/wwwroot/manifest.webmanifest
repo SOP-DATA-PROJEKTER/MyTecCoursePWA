@@ -1,11 +1,11 @@
 {
-  "name": "MyTecCoursePWA",
-  "short_name": "MyTecCoursePWA",
+  "name": "Mit TEC Forløb",
+  "short_name": "Mit TEC Forløb",
   "id": "./",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#eee7d7",
+  "background_color": "#f6eee3",
+  "theme_color": "#282828",
   "prefer_related_applications": false,
   "icons": [
     {

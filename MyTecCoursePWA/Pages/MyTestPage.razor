@@ -1,0 +1,141 @@
+﻿@page "/MyTestPage"
+@using MyTecCoursePWA.Models
+@using MyTecCoursePWA.Components.Selectors
+@inject MockEducationService EducationService
+@inject NavigationManager NavigationManager
+
+<div class="flex w-full items-center justify-center font-bold">
+
+    <h3 class="text-2xl">
+        Administrator Panel
+    </h3>
+
+</div>
+
+<div class="flex w-full flex-col py-2 font-bold lg:py-8 lg:flex-wrap lg:flex-row lg:justify-center">
+    <div class="m-4 flex max-h-min flex-col rounded py-2 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+        <StyledSelector Items="EducationList" SelectedValue="SelectedEducation" SelectedValueChanged="OnEducationChange" />
+        <button class="mt-2 rounded-lg bg-purple-500 px-4 py-2 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Education))">TILFØJ UDDANNELSE</button>
+
+    </div>
+
+    @if (Pathways.Any())
+    {
+        <div class="m-4 flex max-h-min flex-col rounded py-1 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+            <StyledSelector Items="Pathways" SelectedValue="SelectedPathway" SelectedValueChanged="OnPathwayChange" />
+            <button class="mt-2 rounded-lg bg-purple-500 px-4 py-2 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Pathway))">TILFØJ UDDANNELSES RETNING</button>
+        </div>
+    }
+
+    @if (Specializations.Any())
+    {
+        <div class="m-4 flex max-h-min flex-col rounded py-1 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+            <StyledSelector Items="Specializations" SelectedValue="SelectedSpecialization" SelectedValueChanged="OnSpecializationChange" />
+            <button class="mt-2 rounded-lg bg-purple-500 px-4 py-2 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Specialization))">TILFØJ SPECIALE</button>
+        </div>
+    }
+
+    @if (Courses.Any())
+    {
+        <div class="m-4 flex max-h-min flex-col rounded py-1 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+            <StyledSelector Items="Courses" SelectedValue="SelectedCourse" SelectedValueChanged="OnCourseChange" />
+            <button class="mt-2 rounded-lg bg-purple-500 px-4 py-2 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Course))">TILFØJ FORLØB</button>
+        </div>
+    }
+
+    @if (Subjects.Any())
+    {
+        <div class="m-4 flex max-h-min flex-col rounded py-1 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+            <StyledSelector Items="Subjects" SelectedValue="SelectedSubject" SelectedValueChanged="OnSubjectChange" />
+            <button class="mt-2 rounded-lg bg-purple-500 px-4 py-2 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Subject))">TILFØJ FAG</button>
+        </div>
+    }
+
+    @if (Milestones.Any())
+    {
+        <div class="m-4 flex max-h-min flex-col rounded py-1 sm:max-w-xl lg:py-8 lg:px-4 lg:w-2/7 lg:shadow lg:shadow-black lg:border lg:border-[var(--border-color)]">
+            <div>
+                <ul class="mx-2">
+                    @foreach(var milestone in Milestones)
+                    {
+                        <li class="my-4">
+                            @milestone.Description
+                        </li>
+                        <hr>
+                    }
+                </ul>
+            </div>
+            <button class="mt-4 rounded-lg bg-purple-500 px-4 py-1 text-white sm:max-w-xl" @onclick="() => AddNewItem(nameof(Milestone))">TILFØJ MILEPÆL</button>
+        </div>
+    }
+</div>
+
+@code {
+    private List<Education> EducationList = new();
+    private List<Pathway> Pathways = new();
+    private List<Specialization> Specializations = new();
+    private List<Course> Courses = new();
+    private List<Subject> Subjects = new();
+    private List<Milestone> Milestones = new();
+
+    private string SelectedEducation = "";
+    private string SelectedPathway = "";
+    private string SelectedSpecialization = "";
+    private string SelectedCourse = "";
+    private string SelectedSubject = "";
+
+    protected override void OnInitialized()
+    {
+        EducationList = EducationService.GetEducationList();
+    }
+
+    private void OnEducationChange(string value)
+    {
+        SelectedEducation = value;
+        var selected = EducationList.FirstOrDefault(e => e.Name == SelectedEducation);
+        Pathways = selected?.Pathways ?? new();
+        Specializations = new();
+        Courses = new();
+        Subjects = new();
+        Milestones = new();
+    }
+
+    private void OnPathwayChange(string value)
+    {
+        SelectedPathway = value;
+        var selected = Pathways.FirstOrDefault(p => p.Name == SelectedPathway);
+        Specializations = selected?.Specializations ?? new();
+        Courses = new();
+        Subjects = new();
+        Milestones = new();
+    }
+
+    private void OnSpecializationChange(string value)
+    {
+        SelectedSpecialization = value;
+        var selected = Specializations.FirstOrDefault(s => s.Name == SelectedSpecialization);
+        Courses = selected?.Courses ?? new();
+        Subjects = new();
+        Milestones = new();
+    }
+
+    private void OnCourseChange(string value)
+    {
+        SelectedCourse = value;
+        var selected = Courses.FirstOrDefault(c => c.Name == SelectedCourse);
+        Subjects = selected?.Subjects ?? new();
+        Milestones = new();
+    }
+
+    private void OnSubjectChange(string value)
+    {
+        SelectedSubject = value;
+        var selected = Subjects.FirstOrDefault(s => s.Name == SelectedSubject);
+        Milestones = selected?.Milestones ?? new();
+    }
+
+    private void AddNewItem(string className)
+    {
+        NavigationManager.NavigateTo($"/form/{className}?education={SelectedEducation}&pathway={SelectedPathway}&specialization={SelectedSpecialization}&course={SelectedCourse}&subject={SelectedSubject}");
+    }
+}

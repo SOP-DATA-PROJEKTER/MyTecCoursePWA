@@ -1,0 +1,20 @@
+﻿
+
+<button class="border-2 flex min-w-30 cursor-pointer items-center justify-center space-x-2 rounded-lg px-3 py-2 font-bold text-white shadow-md transition @(IsDisabled ? "bg-gray-400 border-gray-400 hover:cursor-not-allowed" :
+                 ButtonType == "add" ? "bg-green-500 hover:bg-green-600 hover:border-green-600 border-green-500" :
+                 ButtonType == "edit" ? "bg-blue-500 hover:bg-blue-700 border-blue-500 hover:border-blue-700" :
+                 ButtonType == "delete" ? "bg-red-500 hover:bg-red-700 border-red-500 hover:border-red-700" : "bg-gray-500 border-gray-500")"
+        @onclick="OnClick"
+        disabled="@IsDisabled">
+
+    <span>@Icon</span>
+    <span>@Text</span>
+</button>
+
+@code {
+    [Parameter] public string ButtonType { get; set; } = "edit"; // "add", "edit", "delete"
+    [Parameter] public string Icon { get; set; } = "✏️"; // Default Edit Icon
+    [Parameter] public string Text { get; set; } = "Rediger"; // Default "Edit"
+    [Parameter] public EventCallback OnClick { get; set; } // Click Event Handler
+    [Parameter] public bool IsDisabled { get; set; } = false; // Disable State
+}

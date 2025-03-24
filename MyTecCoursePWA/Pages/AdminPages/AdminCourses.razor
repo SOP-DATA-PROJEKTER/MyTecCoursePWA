@@ -1,0 +1,212 @@
+﻿@using MyTecCoursePWA.Components.Error
+@using MyTecCoursePWA.Models;
+@using MyTecCoursePWA.Components.Buttons;
+@using MyTecCoursePWA.Components.Skeletons;
+@using MyTecCoursePWA.Components.List;
+@page "/AdminCourses"
+@inject MockEducationService EducationService
+@inject APIService APIService
+
+<div class="">
+	<h2 class="text-xl font-bold">📖 Administrer Forløb</h2>
+	<p class="text-gray-500">Her kan du oprette, redigere og slette forløb.</p>
+
+	@if (isApiFailed)
+	{
+		<ErrorBox/>
+
+	}
+	@if (isLoading)
+	{
+		<div class="flex w-full justify-items-center py-8">
+			<SkeletonBox amount="3" flexDirection="flex-col" lgWidth="lg:w-full" />
+		</div>
+	}
+	else
+	{
+
+
+		<!-- Select Education -->
+		<label class="mt-4 block text-sm font-semibold">Vælg Uddannelse:</label>
+		<select class="mt-2 w-full rounded border p-2 @errorStyle" @bind="SelectedEducationId" disabled="@(isApiFailed)">
+			<option value="0">-- Vælg en uddannelse --</option>
+			@foreach (var edu in EducationList)
+			{
+				<option value="@edu.Id">@edu.Name</option>
+			}
+		</select>
+
+		<!-- Select Pathway -->
+		<label class="mt-4 block text-sm font-semibold">Vælg Retning:</label>
+		<select class="mt-2 w-full rounded border p-2 @errorStyle" @bind="SelectedPathwayId" disabled="@(SelectedEducation == null || isApiFailed) ">
+			<option value="0">-- Vælg en retning --</option>
+			@if (SelectedEducation != null)
+			{
+				@foreach (var path in SelectedEducation.Pathways)
+				{
+					<option value="@path.Id">@path.Name</option>
+				}
+			}
+		</select>
+
+		<!-- Select Specialization -->
+		<label class="mt-4 block text-sm font-semibold">Vælg Specialisering:</label>
+		<select class="mt-2 w-full rounded border p-2 @errorStyle" @bind="SelectedSpecializationId" disabled="@(SelectedPathway == null || isApiFailed)">
+			<option value="0">-- Vælg en specialisering --</option>
+			@if (SelectedPathway != null)
+			{
+				@foreach (var spec in SelectedPathway.Specializations)
+				{
+					<option value="@spec.Id">@spec.Name</option>
+				}
+			}
+		</select>
+
+		<!-- Add Course (Only Visible if Specialization is Selected) -->
+		@if (SelectedSpecialization != null)
+		{
+			<div class="mt-4 flex items-center space-x-2">
+				<input type="text" class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300"
+					   placeholder="Indtast forløbets navn..."
+					   @bind="NewCourseName"
+					   @bind:event="oninput" />
+
+				<AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
+								   OnClick="AddCourseAsync"
+								   IsDisabled="@(string.IsNullOrWhiteSpace(NewCourseName))" />
+			</div>
+		}
+
+		<!-- Course List (Ensures courses are displayed when Specialization is selected) -->
+		<div class="mt-6 rounded border p-4">
+			<h3 class="text-lg font-semibold">Forløb for: @(SelectedSpecialization?.Name ?? "Ingen valgt")</h3>
+
+			@if (SelectedSpecialization != null && SelectedSpecialization.Courses.Any())
+			{
+				<AdminList TItem="Course"
+						   Items="SelectedSpecialization.Courses"
+						   GetItemName="c => c.Name"
+						   OnEdit="EditCourse"
+						   OnDelete="DeleteCourseAsync" />
+			}
+			else
+			{
+				<p class="text-gray-500">⚠️ Ingen forløb fundet. Vælg en specialisering eller tilføj en.</p>
+			}
+		</div>
+	}
+</div>
+
+
+@code {
+	private List<Education> EducationList = new();
+
+	private int SelectedEducationId
+	{
+		get => _selectedEducationId;
+		set
+		{
+			_selectedEducationId = value;
+			SelectedEducation = EducationList.FirstOrDefault(e => e.Id == value);
+			SelectedPathway = null;
+			SelectedSpecialization = null;
+			SelectedPathwayId = 0;
+			SelectedSpecializationId = 0;
+			StateHasChanged();
+		}
+	}
+	private int _selectedEducationId = 0;
+	private Education? SelectedEducation;
+
+	private int SelectedPathwayId
+	{
+		get => _selectedPathwayId;
+		set
+		{
+			_selectedPathwayId = value;
+			SelectedPathway = SelectedEducation?.Pathways.FirstOrDefault(p => p.Id == value);
+			SelectedSpecialization = null;
+			SelectedSpecializationId = 0;
+			StateHasChanged();
+		}
+	}
+	private int _selectedPathwayId = 0;
+	private Pathway? SelectedPathway;
+
+	private int SelectedSpecializationId
+	{
+		get => _selectedSpecializationId;
+		set
+		{
+			_selectedSpecializationId = value;
+			SelectedSpecialization = SelectedPathway?.Specializations.FirstOrDefault(s => s.Id == value);
+			StateHasChanged();
+		}
+	}
+	private int _selectedSpecializationId = 0;
+	private Specialization? SelectedSpecialization;
+
+	private string NewCourseName = "";
+
+	private bool isLoading = true;
+	private bool isApiFailed = false;
+	private string errorStyle = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			string endpoint = "Education";
+			EducationList = await APIService.GetAllAsync<Education>(endpoint);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			isApiFailed = true;
+		}
+		finally
+		{
+			isApiFailed = EducationList.Count == 0;
+			isLoading = false;
+			StateHasChanged();
+			if (isApiFailed)
+			{
+				errorStyle = "bg-gray-200 hover:cursor-not-allowed";
+			}
+		}
+	}
+
+	private async Task AddCourseAsync()
+	{
+		if (SelectedSpecialization != null && !string.IsNullOrWhiteSpace(NewCourseName))
+		{
+			var newCourse = new Course { Name = NewCourseName, SpecializationId = SelectedSpecialization.Id };
+			NewCourseName = ""; // resets the course name input
+
+			SelectedSpecialization.Courses = SelectedSpecialization.Courses
+				.Append(await APIService.PostAsync<Course>("Course", newCourse))
+				.ToList(); // sends the new course to the API & adds the return value to the list
+
+			StateHasChanged(); // updated the UI
+		}
+	}
+
+	private void EditCourse(Course course)
+	{
+		// Logic to edit course
+	}
+
+
+	private async Task DeleteCourseAsync(Course course)
+	{
+		string endpoint = "Course";
+		if (SelectedSpecialization != null)
+		{
+			if (await APIService.DeleteAsync<Course>(endpoint, course.Id))
+			{
+				SelectedSpecialization.Courses.Remove(course);
+				StateHasChanged();
+			}
+		}
+	}
+}

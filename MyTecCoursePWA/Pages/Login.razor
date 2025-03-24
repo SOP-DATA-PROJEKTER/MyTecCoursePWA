@@ -1,0 +1,68 @@
+﻿@page "/login"
+@using MyTecCoursePWA.Components
+
+<div class="flex h-full w-full items-center justify-center p-8 lg:mt-12">
+    <div class="w-full max-w-md rounded-xl border border-[var(--border-color)] bg-white p-8 shadow-lg shadow-black">
+        <!-- Login Icon -->
+        <div class="mb-6 flex justify-center">
+            <img src="./ProfilePicture_Default.jpg" alt="Login Icon" class="h-16 w-16">
+        </div>
+
+
+        <form @onsubmit="HandleLogin" class="space-y-6">
+            <!-- Email Input -->
+            <div>
+                <label for="email" class="mb-2 block font-medium text-gray-900">
+                    Email
+                </label>
+                <input type="email" id="email" @bind="Email" required
+                       class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+                       placeholder="Indtast din email" />
+            </div>
+
+            <!-- Password Input -->
+            <div>
+                <label for="password" class="mb-2 block font-medium text-gray-900">
+                    Password
+                </label>
+                <input type="password" id="password" @bind="Password" required
+                       class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+                       placeholder="Indtast din adgangskode" />
+            </div>
+
+            <!-- Forgot Password -->
+            <div class="flex justify-end text-sm">
+                <a href="/forgot-password" class="text-[var(--primary-color)] hover:underline">
+                    Forgot password?
+                </a>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" 
+                    class="my-2 w-full rounded-lg bg-[var(--primary-color)] px-6 py-3 text-center text-white hover:bg-purple-700 focus:ring focus:ring-purple-300">
+                Log ind
+            </button>
+        </form>
+
+        <!-- Don't have an account -->
+        <div class="mt-6 text-center text-sm text-gray-600">
+            Don't have an account yet? 
+            <a href="/register" class="font-medium text-[var(--primary-color)] hover:underline">
+                Sign up
+            </a>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string Email { get; set; } = "";
+    private string Password { get; set; } = "";
+
+    [CascadingParameter] public MainLayout Layout { get; set; }
+
+
+    private void HandleLogin()
+    {
+        Console.WriteLine($"Logging in with: Email={Email}, Password={Password}");
+    }
+}

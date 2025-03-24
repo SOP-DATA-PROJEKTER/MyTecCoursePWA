@@ -1,0 +1,85 @@
+﻿@using MyTecCoursePWA.Models;
+
+@page "/Subjects"
+
+@inject MockUserService UserService
+
+<div class="p-4 sm:p-6">
+    <h2 class="text-center text-xl font-bold sm:text-2xl">Vælg dine fag</h2>
+    <p class="text-center text-gray-500">Tryk på et fag for at se detaljer</p>
+
+    <!-- Tilbage til dashboard knap -->
+    <div class="mt-4 text-center">
+        <button class="rounded-lg bg-gray-600 px-4 py-2 text-white shadow-md transition duration-300 hover:bg-gray-700 active:scale-95"
+                @onclick="GoToDashboard">
+            ⬅️ Tilbage til Dashboard
+        </button>
+    </div>
+
+    <!-- If no subjects exist, show an error message -->
+    @if (User1.SelectedCourse?.Subjects == null || !User1.SelectedCourse.Subjects.Any())
+    {
+        <p class="text-center text-red-500">🚨 No subjects found for course @User1.SelectedCourse?.Name (ID: @User1.CourseId) 🚨</p>
+    }
+
+    <!-- Subject List -->
+    <div class="mt-6 flex flex-wrap items-start justify-center gap-6">
+        @foreach (var subject in User1.SelectedCourse?.Subjects ?? new List<Subject>())
+        {
+            <div class="@($"relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg cursor-pointer rounded-lg p-4 shadow-md transition duration-300 hover:shadow-lg flex-grow-0 {(selectedSubjectId == subject.Id ? "bg-yellow-200" : "bg-gray-100")}")"
+                 @onclick="() => ToggleSubjectDetails(subject.Id)">
+
+                <div class="flex h-16 items-center justify-center rounded-lg bg-gray-200">
+                    <span class="text-gray-500">📚</span>
+                </div>
+
+                <p class="mt-2 text-center text-sm font-semibold sm:text-base">@subject.Name</p>
+
+                <!-- Expandable Section -->
+                @if (selectedSubjectId == subject.Id)
+                {
+                    <div class="mt-2 w-full rounded-lg border border-gray-300 bg-white p-4 shadow-md">
+                        <p class="text-sm text-gray-700"><strong>Beskrivelse:</strong> @subject.Description</p>
+
+                        @if (subject.Milestones.Any())
+                        {
+                            <p class="mt-2 text-sm font-semibold text-gray-700">Målepinde: </p>
+                            <ul class="mt-1 list-disc pl-5 text-sm text-gray-700">
+                                @foreach (var milestone in subject.Milestones)
+                                {
+                                    <li>@milestone.Description</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="mt-2 text-sm text-gray-500">Ingen Målpinde tilgængelige.</p>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Inject] private NavigationManager Navigation { get; set; } = default!;
+    private int? selectedSubjectId = null;
+    private User User1 { get; set; } = new User();
+
+    protected override void OnInitialized()
+    {
+        // Hent mock-user fra UserService
+        User1 = UserService.GetUser();
+    }
+
+    private void ToggleSubjectDetails(int subjectId)
+    {
+        selectedSubjectId = (selectedSubjectId == subjectId) ? null : subjectId; // Toggle selection
+    }
+
+    private void GoToDashboard()
+    {
+        Navigation.NavigateTo("/UserDashboard");
+    }
+}

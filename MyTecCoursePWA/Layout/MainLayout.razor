@@ -1,5 +1,6 @@
 ﻿@using MyTecCoursePWA.Components.Navbar
 @using MyTecCoursePWA.Components.Footer
+@using MyTecCoursePWA.Layout
 
 @inherits LayoutComponentBase
 @inject IJSRuntime JSRuntime
@@ -10,8 +11,8 @@
 		<div class="h-16 md:h-20 lg:h-28 xl:h-16">
 			<Navbar />
 		</div>
-		<main class="flex-grow">
-			<article class="fade-container mx-6 my-8 overflow-hidden px-4 @fadeClass">
+		<main class="style= flex-grow bg-[var(--background)]">
+			<article class="fade-container overflow-hidden @fadeClass">
 				@Body
 			</article>
 		</main>
@@ -31,6 +32,7 @@
 
 		await Task.Delay(250);
 
+
 		NavigationManager.NavigateTo(link);
 
 		fadeClass = "fade-in";
@@ -41,7 +43,7 @@
 		fadeClass = "";
 		StateHasChanged();
 
-		InvokeAsync(() => StateHasChanged());
+		await InvokeAsync(() => StateHasChanged());
 
 	}
 }

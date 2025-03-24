@@ -1,0 +1,162 @@
+﻿@using MyTecCoursePWA.Components.Error
+@using MyTecCoursePWA.Components.Skeletons
+@using MyTecCoursePWA.Models;
+@using MyTecCoursePWA.Components.Buttons;
+@using MyTecCoursePWA.Components.List;
+@inject MockEducationService EducationService
+@inject APIService APIService
+
+<div class="">
+	<h2 class="text-xl font-bold">📘 Administrer Retninger</h2>
+	<p class="text-gray-500">Vælg en uddannelse før du tilføjer eller redigerer retninger.</p>
+
+	@if (isApiFailed)
+	{
+		<ErrorBox />
+	}
+
+	@if (isLoading)
+	{
+		<div class="flex w-full justify-items-center py-8">
+			<SkeletonBox amount="1" flexDirection="flex-col" lgWidth="lg:w-full" />
+		</div>
+	}
+	else
+	{
+
+
+		<!-- Select Education -->
+		<label class="mt-4 block text-sm font-semibold">Vælg Uddannelse:</label>
+		<select class="mt-2 w-full rounded border p-2 @errorStyle" @bind="SelectedEducationId" disabled="@(isApiFailed)">
+			<option value="0">-- Vælg en uddannelse --</option>
+			@foreach (var edu in EducationList)
+			{
+				<option value="@edu.Id">@edu.Name</option>
+			}
+		</select>
+
+
+		@if (SelectedEducation != null)
+		{
+			<div class="mt-4 flex items-center space-x-2">
+				<!-- Input Field for Pathway Name -->
+				<input type="text"
+					   class="w-full rounded border p-2 text-gray-700 focus:ring focus:ring-green-300 @errorStyle"
+					   placeholder="Indtast retningens navn..."
+					   @bind="NewPathwayName"
+					   @bind:event="oninput"
+					   disabled="@(isApiFailed)" />
+
+				<!-- Add Button (Disabled if Input is Empty) -->
+				<AdminActionButton ButtonType="add" Icon="➕" Text="Tilføj"
+								   OnClick="AddPathwayAsync"
+								   IsDisabled="@(string.IsNullOrWhiteSpace(NewPathwayName))" />
+			</div>
+		}
+
+		<!-- Display Pathways only if an Education is selected -->
+		<div class="mt-6 rounded border p-4">
+			<h3 class="text-lg font-semibold">Retninger for: @(SelectedEducation?.Name ?? "Ingen valgt")</h3>
+
+			@if (SelectedEducation != null && SelectedEducation.Pathways.Any())
+			{
+				<AdminList TItem="Pathway"
+						   Items="SelectedEducation.Pathways"
+						   GetItemName="p => p.Name"
+						   OnEdit="EditPathway"
+						   OnDelete="DeletePathwayAsync" />
+			}
+			else
+			{
+				<p class="text-gray-500">⚠️ Ingen retninger fundet. Vælg en uddannelse eller tilføj en.</p>
+			}
+		</div>
+
+	}
+
+</div>
+
+@code {
+	private List<Education> EducationList = new();
+	private bool isLoading = true;
+	private bool isApiFailed = false;
+	private string errorStyle = "";
+
+	private int SelectedEducationId
+	{
+		get => _selectedEducationId;
+		set
+		{
+			_selectedEducationId = value;
+			SelectedEducation = EducationList.FirstOrDefault(e => e.Id == value);
+			NewPathwayName = ""; // Reset input when selecting a new Education
+			StateHasChanged(); // 🔥 Ensure UI refresh
+		}
+	}
+	private int _selectedEducationId = 0;
+	private Education? SelectedEducation;
+	private string NewPathwayName = ""; // Stores the input for a new pathway
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			string endpoint = "Education";
+			EducationList = await APIService.GetAllAsync<Education>(endpoint);
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine(ex.Message);
+			isApiFailed = true;
+		}
+		finally
+		{
+			isApiFailed = EducationList.Count == 0;
+			isLoading = false;
+			StateHasChanged();
+			if (isApiFailed)
+			{
+				errorStyle = "bg-gray-200 hover:cursor-not-allowed";
+			}
+		}
+	}
+
+	private async Task AddPathwayAsync()
+	{
+		string endpoint = "Pathway";
+		if (SelectedEducation != null && !string.IsNullOrWhiteSpace(NewPathwayName))
+		{
+			var newPathway = new Pathway
+				{
+					Name = NewPathwayName,
+					EducationId = SelectedEducation.Id
+
+				};
+			SelectedEducation.Pathways = SelectedEducation.Pathways.Append(await APIService.PostAsync(endpoint, newPathway)).ToList();
+
+			// Clear input field after adding
+			NewPathwayName = "";
+			StateHasChanged();
+
+		}
+	}
+
+	private void EditPathway(Pathway path)
+	{
+		// TODO: Implement edit functionality (e.g., open modal or inline edit)
+	}
+
+	private async Task DeletePathwayAsync(Pathway path)
+	{
+		string endpoint = "Pathway";
+		if (SelectedEducation != null)
+		{
+			if (await APIService.DeleteAsync<Pathway>(endpoint, path.Id))
+			{
+				SelectedEducation.Pathways.Remove(path);
+				StateHasChanged();
+			}
+		}
+	}
+}
+
